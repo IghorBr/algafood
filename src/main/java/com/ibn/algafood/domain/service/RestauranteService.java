@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,6 +26,10 @@ public class RestauranteService {
 
     public List<Restaurante> consultarPorNome(final String nome, final Long id) {
         return restauranteRepository.consultarPorNome(nome, id);
+    }
+
+    public List<Restaurante> find(final String nome, final BigDecimal taxaInicial, final BigDecimal taxaFinal) {
+        return restauranteRepository.find(nome, taxaInicial, taxaFinal);
     }
 
     public Optional<Restaurante> findById(final Long id) {
