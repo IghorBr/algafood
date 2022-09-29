@@ -23,6 +23,10 @@ public class RestauranteService {
         return restauranteRepository.findAll();
     }
 
+    public List<Restaurante> consultarPorNome(final String nome, final Long id) {
+        return restauranteRepository.consultarPorNome(nome, id);
+    }
+
     public Optional<Restaurante> findById(final Long id) {
         return restauranteRepository.findById(id);
     }
