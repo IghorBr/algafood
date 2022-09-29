@@ -47,9 +47,9 @@ public class RestauranteController {
 
     @GetMapping("/find")
     public ResponseEntity<List<Restaurante>> find(
-            @RequestParam("nome") String nome,
-            @RequestParam("taxaInicial") BigDecimal taxaInicial,
-            @RequestParam("taxaFinal") BigDecimal taxaFinal
+            @RequestParam(value = "nome", required = false) String nome,
+            @RequestParam(value = "taxaInicial", required = false) BigDecimal taxaInicial,
+            @RequestParam(value = "taxaFinal", required = false) BigDecimal taxaFinal
     ) {
         return ResponseEntity.ok(restauranteService.find(nome, taxaInicial, taxaFinal));
     }
