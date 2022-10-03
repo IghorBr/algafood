@@ -5,9 +5,9 @@ import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
 
-public class RestaurantesSpecBuilder {
+public class RestauranteSpecBuilder {
 
-    private RestaurantesSpecBuilder() {
+    private RestauranteSpecBuilder() {
 
     }
 
