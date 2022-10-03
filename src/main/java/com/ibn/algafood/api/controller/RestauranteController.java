@@ -17,6 +17,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.ibn.algafood.infrastructure.repository.spec.RestaurantesSpecBuilder.comFreteGratis;
+import static com.ibn.algafood.infrastructure.repository.spec.RestaurantesSpecBuilder.nomeSemelhante;
+
 @RestController
 @RequestMapping("/restaurantes")
 @RequiredArgsConstructor
@@ -52,6 +55,13 @@ public class RestauranteController {
             @RequestParam(value = "taxaFinal", required = false) BigDecimal taxaFinal
     ) {
         return ResponseEntity.ok(restauranteService.find(nome, taxaInicial, taxaFinal));
+    }
+
+    @GetMapping("/gratuito")
+    public ResponseEntity<List<Restaurante>> findSpec(
+            @RequestParam(value = "nome", required = false) String nome
+    ) {
+        return ResponseEntity.ok(restauranteService.findAll(comFreteGratis().and(nomeSemelhante(nome))));
     }
 
     @PostMapping

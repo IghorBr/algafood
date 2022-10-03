@@ -6,6 +6,7 @@ import com.ibn.algafood.domain.model.Restaurante;
 import com.ibn.algafood.domain.repository.CozinhaRepository;
 import com.ibn.algafood.domain.repository.RestauranteRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -21,6 +22,10 @@ public class RestauranteService {
 
     public List<Restaurante> findAll() {
         return restauranteRepository.findAll();
+    }
+
+    public List<Restaurante> findAll(Specification<Restaurante> spec) {
+        return restauranteRepository.findAll(spec);
     }
 
     public List<Restaurante> consultarPorNome(final String nome, final Long id) {
