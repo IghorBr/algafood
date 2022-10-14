@@ -2,9 +2,12 @@ package com.ibn.algafood.domain.model;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +33,14 @@ public class Restaurante {
 
     @Embedded
     private Endereco endereco;
+
+    @Column(nullable = false, columnDefinition = "datetime")
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    @Column(nullable = false, columnDefinition = "datetime")
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 
     @ManyToMany
     @JoinTable(name = "RESTAURANTE_FORMA_PAGAMENTO",
