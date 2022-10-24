@@ -1,14 +1,15 @@
 package com.ibn.algafood.domain.model;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-@Data
 @Embeddable
+@Getter @Setter
 public class Endereco {
 
     @Column(name = "endereco_cep")
