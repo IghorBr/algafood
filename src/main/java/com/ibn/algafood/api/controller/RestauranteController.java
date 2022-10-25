@@ -5,6 +5,7 @@ import com.ibn.algafood.domain.exception.EntidadeNaoEncontradaException;
 import com.ibn.algafood.domain.model.Restaurante;
 import com.ibn.algafood.domain.service.RestauranteService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,13 +21,18 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/restaurantes")
 @RequiredArgsConstructor
+@Slf4j
 public class RestauranteController {
 
     private final RestauranteService restauranteService;
 
     @GetMapping
     public ResponseEntity<List<Restaurante>> findAll() {
-        return ResponseEntity.ok(restauranteService.findAll());
+        List<Restaurante> restaurantes = restauranteService.findAll();
+
+        restaurantes.forEach(r -> log.info("A cozinha do restaurante " + r.getNome() + " é " + r.getCozinha().getNome()));
+
+        return ResponseEntity.ok(restaurantes);
     }
 
     @GetMapping("/{restauranteId}")
