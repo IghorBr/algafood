@@ -28,12 +28,9 @@ public class CidadeController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Cidade> findById(@PathVariable("id") Long id) {
-        Optional<Cidade> cidadeOptional = cidadeService.findById(id);
+        Cidade cidade = cidadeService.findById(id);
 
-        if (cidadeOptional.isEmpty())
-            return ResponseEntity.notFound().build();
-
-        return ResponseEntity.ok(cidadeOptional.get());
+        return ResponseEntity.ok(cidade);
     }
 
     @PostMapping
@@ -50,16 +47,12 @@ public class CidadeController {
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable("id") Long id, @RequestBody Cidade cidade) {
         try {
-            Cidade novaCidade = cidadeService.findById(id).orElse(null);
+            Cidade novaCidade = cidadeService.findById(id);
 
-            if (Objects.nonNull(novaCidade)) {
-                BeanUtils.copyProperties(cidade, novaCidade, "id", "estado");
+            BeanUtils.copyProperties(cidade, novaCidade, "id", "estado");
 
-                novaCidade = cidadeService.save(novaCidade);
-                return ResponseEntity.ok(novaCidade);
-            }
-
-            return ResponseEntity.notFound().build();
+            novaCidade = cidadeService.save(novaCidade);
+            return ResponseEntity.ok(novaCidade);
         } catch (EntidadeNaoEncontradaException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -67,13 +60,7 @@ public class CidadeController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable("id") Long id) {
-        try {
-            cidadeService.deleteById(id);
-            return ResponseEntity.noContent().build();
-        } catch (EntidadeNaoEncontradaException e) {
-            return ResponseEntity.notFound().build();
-        } catch (EntidadeEmUsoException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        }
+        cidadeService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }

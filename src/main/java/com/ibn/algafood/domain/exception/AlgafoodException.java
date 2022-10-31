@@ -1,12 +1,11 @@
 package com.ibn.algafood.domain.exception;
 
-public class AlgafoodException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
-    public AlgafoodException(String message) {
-        super(message);
-    }
+public class AlgafoodException extends ResponseStatusException {
 
-    public AlgafoodException(String message, Throwable cause) {
-        super(message, cause);
+    public AlgafoodException(HttpStatus status, String reason) {
+        super(status, reason);
     }
 }

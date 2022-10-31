@@ -37,13 +37,8 @@ public class RestauranteController {
 
     @GetMapping("/{restauranteId}")
     public ResponseEntity<Restaurante> findById(@PathVariable Long restauranteId) {
-        Optional<Restaurante> restaurante = restauranteService.findById(restauranteId);
-
-        if (restaurante.isPresent()) {
-            return ResponseEntity.ok(restaurante.get());
-        }
-
-        return ResponseEntity.notFound().build();
+        Restaurante restaurante = restauranteService.findById(restauranteId);
+        return ResponseEntity.ok(restaurante);
     }
 
     @GetMapping("/por-nome")
@@ -85,20 +80,15 @@ public class RestauranteController {
                                        @RequestBody Restaurante restaurante) {
         try {
             Restaurante restauranteAtual = restauranteService
-                    .findById(restauranteId).orElse(null);
+                    .findById(restauranteId);
 
-            if (restauranteAtual != null) {
-                BeanUtils.copyProperties(restaurante, restauranteAtual, "id", "cozinha", "formasPagamento", "endereco", "createdAt", "updatedAt");
+            BeanUtils.copyProperties(restaurante, restauranteAtual, "id", "cozinha", "formasPagamento", "endereco", "dataCadastro", "dataAtualizacao");
 
-                restauranteAtual = restauranteService.save(restauranteAtual);
-                return ResponseEntity.ok(restauranteAtual);
-            }
-
-            return ResponseEntity.notFound().build();
+            restauranteAtual = restauranteService.save(restauranteAtual);
+            return ResponseEntity.ok(restauranteAtual);
 
         } catch (EntidadeNaoEncontradaException e) {
-            return ResponseEntity.badRequest()
-                    .body(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -117,7 +107,7 @@ public class RestauranteController {
     }
 
     private Restaurante retornaRestaurantePreenchido(final Long id, Map<String, Object> fields) throws IllegalAccessException {
-        Restaurante restaurante = restauranteService.findById(id).orElseThrow(() -> new EntidadeNaoEncontradaException(String.format("Restaurante de código %s não encontrado.", id)));
+        Restaurante restaurante = restauranteService.findById(id);
 
         ObjectMapper objectMapper = new ObjectMapper();
         Restaurante novoRestaurante = objectMapper.convertValue(fields, Restaurante.class);

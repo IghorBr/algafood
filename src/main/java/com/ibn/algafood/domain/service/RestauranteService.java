@@ -40,8 +40,8 @@ public class RestauranteService {
         return restauranteRepository.findCriteriaApi(nome, taxaInicial, taxaFinal);
     }
 
-    public Optional<Restaurante> findById(final Long id) {
-        return restauranteRepository.findById(id);
+    public Restaurante findById(final Long id) {
+        return restauranteRepository.findById(id).orElseThrow(() -> new EntidadeNaoEncontradaException("Restaurante não encontrado."));
     }
 
     public Restaurante save(Restaurante restaurante) {

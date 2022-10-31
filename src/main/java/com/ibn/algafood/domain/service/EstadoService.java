@@ -23,8 +23,8 @@ public class EstadoService {
         return estadoRepository.findAll();
     }
 
-    public Optional<Estado> findById(final Long id) {
-        return estadoRepository.findById(id);
+    public Estado findById(final Long id) {
+        return estadoRepository.findById(id).orElseThrow(() -> new EntidadeNaoEncontradaException("Estado não encontrado"));
     }
 
     public Estado save(Estado estado) {
