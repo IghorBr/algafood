@@ -1,5 +1,6 @@
 package com.ibn.algafood.api.controller;
 
+import com.ibn.algafood.domain.exception.AlgafoodException;
 import com.ibn.algafood.domain.exception.EntidadeEmUsoException;
 import com.ibn.algafood.domain.exception.EntidadeNaoEncontradaException;
 import com.ibn.algafood.domain.model.Cidade;
@@ -40,21 +41,20 @@ public class CidadeController {
 
             return ResponseEntity.status(HttpStatus.CREATED).body(cidade);
         } catch (EntidadeNaoEncontradaException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable("id") Long id, @RequestBody Cidade cidade) {
+        Cidade novaCidade = cidadeService.findById(id);
+        BeanUtils.copyProperties(cidade, novaCidade, "id");
+
         try {
-            Cidade novaCidade = cidadeService.findById(id);
-
-            BeanUtils.copyProperties(cidade, novaCidade, "id", "estado");
-
             novaCidade = cidadeService.save(novaCidade);
             return ResponseEntity.ok(novaCidade);
         } catch (EntidadeNaoEncontradaException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            throw new AlgafoodException(e.getMessage());
         }
     }
 

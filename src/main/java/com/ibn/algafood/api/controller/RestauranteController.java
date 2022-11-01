@@ -1,6 +1,7 @@
 package com.ibn.algafood.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ibn.algafood.domain.exception.AlgafoodException;
 import com.ibn.algafood.domain.exception.EntidadeNaoEncontradaException;
 import com.ibn.algafood.domain.model.Restaurante;
 import com.ibn.algafood.domain.service.RestauranteService;
@@ -70,25 +71,21 @@ public class RestauranteController {
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(restaurante);
         } catch (EntidadeNaoEncontradaException e) {
-            return ResponseEntity.badRequest()
-                    .body(e.getMessage());
+            throw new AlgafoodException(e.getMessage());
         }
     }
 
     @PutMapping("/{restauranteId}")
     public ResponseEntity<?> update(@PathVariable Long restauranteId,
                                        @RequestBody Restaurante restaurante) {
+        Restaurante restauranteAtual = restauranteService.findById(restauranteId);
+        BeanUtils.copyProperties(restaurante, restauranteAtual, "id", "cozinha", "formasPagamento", "endereco", "dataCadastro", "dataAtualizacao");
+
         try {
-            Restaurante restauranteAtual = restauranteService
-                    .findById(restauranteId);
-
-            BeanUtils.copyProperties(restaurante, restauranteAtual, "id", "cozinha", "formasPagamento", "endereco", "dataCadastro", "dataAtualizacao");
-
             restauranteAtual = restauranteService.save(restauranteAtual);
             return ResponseEntity.ok(restauranteAtual);
-
         } catch (EntidadeNaoEncontradaException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            throw new AlgafoodException(e.getMessage());
         }
     }
 
@@ -96,13 +93,9 @@ public class RestauranteController {
     public ResponseEntity<?> partialUpdate(@PathVariable("id") Long id, @RequestBody Map<String, Object> fields) {
         try {
             Restaurante restaurante = retornaRestaurantePreenchido(id, fields);
-            restaurante = restauranteService.save(restaurante);
-
-            return ResponseEntity.ok(restaurante);
+            return this.update(id, restaurante);
         } catch (IllegalAccessException | IllegalArgumentException e ) {
             return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (EntidadeNaoEncontradaException e) {
-            return ResponseEntity.notFound().build();
         }
     }
 
