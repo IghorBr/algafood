@@ -36,7 +36,7 @@ public class CozinhaService {
         try {
             cozinhaRepository.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
-            throw new CidadeNaoEncontradaException(id);
+            throw new CozinhaNaoEncontradaException(id);
         } catch (DataIntegrityViolationException e) {
             throw new EntidadeEmUsoException(
                     String.format("Cozinha de código %d não pode ser removida, pois está em uso", id));

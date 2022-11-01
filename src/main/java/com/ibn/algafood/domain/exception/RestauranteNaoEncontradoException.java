@@ -4,12 +4,12 @@ import org.springframework.http.HttpStatus;
 
 public class RestauranteNaoEncontradoException extends EntidadeNaoEncontradaException {
 
-    public RestauranteNaoEncontradoException(String reason) {
-        this(HttpStatus.NOT_FOUND, reason);
+    public RestauranteNaoEncontradoException(String message) {
+        super(message);
     }
 
-    public RestauranteNaoEncontradoException(HttpStatus status, String reason) {
-        super(status, reason);
+    public RestauranteNaoEncontradoException(String message, Throwable cause) {
+        super(message, cause);
     }
 
     public RestauranteNaoEncontradoException(Long id) {

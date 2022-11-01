@@ -4,12 +4,12 @@ import org.springframework.http.HttpStatus;
 
 public class CozinhaNaoEncontradaException extends EntidadeNaoEncontradaException {
 
-    public CozinhaNaoEncontradaException(String reason) {
-        this(HttpStatus.NOT_FOUND, reason);
+    public CozinhaNaoEncontradaException(String message) {
+        super(message);
     }
 
-    public CozinhaNaoEncontradaException(HttpStatus status, String reason) {
-        super(status, reason);
+    public CozinhaNaoEncontradaException(String message, Throwable cause) {
+        super(message, cause);
     }
 
     public CozinhaNaoEncontradaException(Long id) {

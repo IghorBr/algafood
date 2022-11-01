@@ -95,7 +95,7 @@ public class RestauranteController {
             Restaurante restaurante = retornaRestaurantePreenchido(id, fields);
             return this.update(id, restaurante);
         } catch (IllegalAccessException | IllegalArgumentException e ) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            throw new AlgafoodException(e.getMessage());
         }
     }
 

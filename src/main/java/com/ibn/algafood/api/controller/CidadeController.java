@@ -42,7 +42,7 @@ public class CidadeController {
 
             return ResponseEntity.status(HttpStatus.CREATED).body(cidade);
         } catch (EstadoNaoEncontradoException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            throw new AlgafoodException(e.getMessage());
         }
     }
 
@@ -55,7 +55,7 @@ public class CidadeController {
             novaCidade = cidadeService.save(novaCidade);
             return ResponseEntity.ok(novaCidade);
         } catch (EstadoNaoEncontradoException e) {
-            throw new AlgafoodException(e.getMessage());
+            throw new EntidadeNaoEncontradaException(e.getMessage());
         }
     }
 

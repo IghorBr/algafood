@@ -6,11 +6,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(HttpStatus.CONFLICT)
 public class EntidadeEmUsoException extends AlgafoodException {
 
-    public EntidadeEmUsoException(HttpStatus status, String reason) {
-        super(status, reason);
+    public EntidadeEmUsoException(String message) {
+        super(message);
     }
 
-    public EntidadeEmUsoException(String reason) {
-        this(HttpStatus.CONFLICT, reason);
+    public EntidadeEmUsoException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

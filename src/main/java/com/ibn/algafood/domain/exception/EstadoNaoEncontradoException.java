@@ -4,12 +4,12 @@ import org.springframework.http.HttpStatus;
 
 public class EstadoNaoEncontradoException extends EntidadeNaoEncontradaException {
 
-    public EstadoNaoEncontradoException(String reason) {
-        this(HttpStatus.NOT_FOUND, reason);
+    public EstadoNaoEncontradoException(String message) {
+        super(message);
     }
 
-    public EstadoNaoEncontradoException(HttpStatus status, String reason) {
-        super(status, reason);
+    public EstadoNaoEncontradoException(String message, Throwable cause) {
+        super(message, cause);
     }
 
     public EstadoNaoEncontradoException(Long id) {

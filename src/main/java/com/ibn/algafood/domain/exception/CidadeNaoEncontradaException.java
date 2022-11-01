@@ -4,12 +4,12 @@ import org.springframework.http.HttpStatus;
 
 public class CidadeNaoEncontradaException extends EntidadeNaoEncontradaException {
 
-    public CidadeNaoEncontradaException(String reason) {
-        this(HttpStatus.NOT_FOUND, reason);
+    public CidadeNaoEncontradaException(String message) {
+        super(message);
     }
 
-    public CidadeNaoEncontradaException(HttpStatus status, String reason) {
-        super(status, reason);
+    public CidadeNaoEncontradaException(String message, Throwable cause) {
+        super(message, cause);
     }
 
     public CidadeNaoEncontradaException(Long id) {

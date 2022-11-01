@@ -3,14 +3,14 @@ package com.ibn.algafood.domain.exception;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(value = HttpStatus.NOT_FOUND)//, reason = "Entidade não encontrada")
+@ResponseStatus(HttpStatus.NOT_FOUND)
 public class EntidadeNaoEncontradaException extends AlgafoodException {
 
-    public EntidadeNaoEncontradaException(String reason) {
-        this(HttpStatus.NOT_FOUND, reason);
+    public EntidadeNaoEncontradaException(String message) {
+        super(message);
     }
 
-    public EntidadeNaoEncontradaException(HttpStatus status, String reason) {
-        super(status, reason);
+    public EntidadeNaoEncontradaException(String message, Throwable cause) {
+        super(message, cause);
     }
 }
