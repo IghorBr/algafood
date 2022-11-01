@@ -1,5 +1,7 @@
 package com.ibn.algafood.domain.service;
 
+import com.ibn.algafood.domain.exception.CidadeNaoEncontradaException;
+import com.ibn.algafood.domain.exception.CozinhaNaoEncontradaException;
 import com.ibn.algafood.domain.exception.EntidadeEmUsoException;
 import com.ibn.algafood.domain.exception.EntidadeNaoEncontradaException;
 import com.ibn.algafood.domain.model.Cozinha;
@@ -23,7 +25,7 @@ public class CozinhaService {
     }
 
     public Cozinha findById(final Long id) {
-        return cozinhaRepository.findById(id).orElseThrow(() -> new EntidadeNaoEncontradaException("Cozinha não encontrada;"));
+        return cozinhaRepository.findById(id).orElseThrow(() -> new CozinhaNaoEncontradaException(id));
     }
 
     public Cozinha save(Cozinha cozinha) {
@@ -34,8 +36,7 @@ public class CozinhaService {
         try {
             cozinhaRepository.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
-            throw new EntidadeNaoEncontradaException(
-                    String.format("Não existe um cadastro de cozinha com código %d", id));
+            throw new CidadeNaoEncontradaException(id);
         } catch (DataIntegrityViolationException e) {
             throw new EntidadeEmUsoException(
                     String.format("Cozinha de código %d não pode ser removida, pois está em uso", id));

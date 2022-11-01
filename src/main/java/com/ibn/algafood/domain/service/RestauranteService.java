@@ -1,6 +1,8 @@
 package com.ibn.algafood.domain.service;
 
+import com.ibn.algafood.domain.exception.CozinhaNaoEncontradaException;
 import com.ibn.algafood.domain.exception.EntidadeNaoEncontradaException;
+import com.ibn.algafood.domain.exception.RestauranteNaoEncontradoException;
 import com.ibn.algafood.domain.model.Cozinha;
 import com.ibn.algafood.domain.model.Restaurante;
 import com.ibn.algafood.domain.repository.CozinhaRepository;
@@ -41,14 +43,13 @@ public class RestauranteService {
     }
 
     public Restaurante findById(final Long id) {
-        return restauranteRepository.findById(id).orElseThrow(() -> new EntidadeNaoEncontradaException("Restaurante não encontrado."));
+        return restauranteRepository.findById(id).orElseThrow(() -> new RestauranteNaoEncontradoException(id));
     }
 
     public Restaurante save(Restaurante restaurante) {
         Long cozinhaId = restaurante.getCozinha().getId();
 
-        Cozinha cozinha = cozinhaRepository.findById(cozinhaId).orElseThrow(() -> new EntidadeNaoEncontradaException(
-                String.format("Não existe cadastro de cozinha com código %d", cozinhaId)));
+        Cozinha cozinha = cozinhaRepository.findById(cozinhaId).orElseThrow(() -> new CozinhaNaoEncontradaException(cozinhaId));
 
         restaurante.setCozinha(cozinha);
         return restauranteRepository.save(restaurante);

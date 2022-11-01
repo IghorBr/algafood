@@ -1,5 +1,6 @@
 package com.ibn.algafood.domain.service;
 
+import com.ibn.algafood.domain.exception.CidadeNaoEncontradaException;
 import com.ibn.algafood.domain.exception.EntidadeEmUsoException;
 import com.ibn.algafood.domain.exception.EntidadeNaoEncontradaException;
 import com.ibn.algafood.domain.model.Cidade;
@@ -27,7 +28,7 @@ public class CidadeService {
     }
 
     public Cidade findById(final Long id) {
-        return cidadeRepository.findById(id).orElseThrow(() -> new EntidadeNaoEncontradaException("Cidade não encontrada"));
+        return cidadeRepository.findById(id).orElseThrow(() -> new CidadeNaoEncontradaException(id));
     }
 
     public Cidade save(Cidade cidade) {
@@ -43,8 +44,7 @@ public class CidadeService {
         try {
             cidadeRepository.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
-            throw new EntidadeNaoEncontradaException(
-                    String.format("Não existe um cadastro de cidade com código %d", id));
+            throw new CidadeNaoEncontradaException(id);
         } catch (DataIntegrityViolationException e) {
             throw new EntidadeEmUsoException(
                     String.format("Cidade de código %d não pode ser removida, pois está em uso", id));

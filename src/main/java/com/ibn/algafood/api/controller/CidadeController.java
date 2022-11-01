@@ -3,6 +3,7 @@ package com.ibn.algafood.api.controller;
 import com.ibn.algafood.domain.exception.AlgafoodException;
 import com.ibn.algafood.domain.exception.EntidadeEmUsoException;
 import com.ibn.algafood.domain.exception.EntidadeNaoEncontradaException;
+import com.ibn.algafood.domain.exception.EstadoNaoEncontradoException;
 import com.ibn.algafood.domain.model.Cidade;
 import com.ibn.algafood.domain.service.CidadeService;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +41,7 @@ public class CidadeController {
             cidade = cidadeService.save(cidade);
 
             return ResponseEntity.status(HttpStatus.CREATED).body(cidade);
-        } catch (EntidadeNaoEncontradaException e) {
+        } catch (EstadoNaoEncontradoException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
@@ -53,7 +54,7 @@ public class CidadeController {
         try {
             novaCidade = cidadeService.save(novaCidade);
             return ResponseEntity.ok(novaCidade);
-        } catch (EntidadeNaoEncontradaException e) {
+        } catch (EstadoNaoEncontradoException e) {
             throw new AlgafoodException(e.getMessage());
         }
     }

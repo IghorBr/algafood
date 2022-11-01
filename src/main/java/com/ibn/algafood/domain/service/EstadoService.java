@@ -2,6 +2,7 @@ package com.ibn.algafood.domain.service;
 
 import com.ibn.algafood.domain.exception.EntidadeEmUsoException;
 import com.ibn.algafood.domain.exception.EntidadeNaoEncontradaException;
+import com.ibn.algafood.domain.exception.EstadoNaoEncontradoException;
 import com.ibn.algafood.domain.model.Estado;
 import com.ibn.algafood.domain.repository.EstadoRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,7 @@ public class EstadoService {
     }
 
     public Estado findById(final Long id) {
-        return estadoRepository.findById(id).orElseThrow(() -> new EntidadeNaoEncontradaException("Estado não encontrado"));
+        return estadoRepository.findById(id).orElseThrow(() -> new EstadoNaoEncontradoException(id));
     }
 
     public Estado save(Estado estado) {
@@ -35,8 +36,7 @@ public class EstadoService {
         try {
             estadoRepository.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
-            throw new EntidadeNaoEncontradaException(
-                    String.format("Não existe um cadastro de estado com código %d", id));
+            throw new EstadoNaoEncontradoException(id);
         } catch (DataIntegrityViolationException e) {
             throw new EntidadeEmUsoException(
                     String.format("Estado de código %d não pode ser removido, pois está em uso", id));
