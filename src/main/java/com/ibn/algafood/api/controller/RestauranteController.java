@@ -1,5 +1,6 @@
 package com.ibn.algafood.api.controller;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibn.algafood.domain.exception.AlgafoodException;
 import com.ibn.algafood.domain.exception.EntidadeNaoEncontradaException;
@@ -7,12 +8,16 @@ import com.ibn.algafood.domain.model.Restaurante;
 import com.ibn.algafood.domain.service.RestauranteService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.List;
@@ -90,29 +95,38 @@ public class RestauranteController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<?> partialUpdate(@PathVariable("id") Long id, @RequestBody Map<String, Object> fields) {
+    public ResponseEntity<?> partialUpdate(@PathVariable("id") Long id, @RequestBody Map<String, Object> fields, HttpServletRequest request) {
         try {
-            Restaurante restaurante = retornaRestaurantePreenchido(id, fields);
+            Restaurante restaurante = retornaRestaurantePreenchido(id, fields, request);
             return this.update(id, restaurante);
         } catch (IllegalAccessException | IllegalArgumentException e ) {
             throw new AlgafoodException(e.getMessage());
         }
     }
 
-    private Restaurante retornaRestaurantePreenchido(final Long id, Map<String, Object> fields) throws IllegalAccessException {
+    private Restaurante retornaRestaurantePreenchido(final Long id, Map<String, Object> fields, HttpServletRequest request) throws IllegalAccessException {
         Restaurante restaurante = restauranteService.findById(id);
+        ServletServerHttpRequest serverHttpRequest = new ServletServerHttpRequest(request);
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        Restaurante novoRestaurante = objectMapper.convertValue(fields, Restaurante.class);
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, true);
+            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
 
-        for (String key : fields.keySet()) {
-            Field field = ReflectionUtils.findField(Restaurante.class, key);
-            field.setAccessible(true);
+            Restaurante novoRestaurante = objectMapper.convertValue(fields, Restaurante.class);
 
-            Object obj = field.get(novoRestaurante);
-            ReflectionUtils.setField(field, restaurante, obj);
+            for (String key : fields.keySet()) {
+                Field field = ReflectionUtils.findField(Restaurante.class, key);
+                field.setAccessible(true);
+
+                Object obj = field.get(novoRestaurante);
+                ReflectionUtils.setField(field, restaurante, obj);
+            }
+
+            return restaurante;
+        } catch (IllegalArgumentException e) {
+            Throwable rootCause = ExceptionUtils.getRootCause(e);
+            throw new HttpMessageNotReadableException(e.getMessage(), rootCause, serverHttpRequest);
         }
-
-        return restaurante;
     }
 }

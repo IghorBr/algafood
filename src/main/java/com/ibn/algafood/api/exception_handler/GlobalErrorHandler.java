@@ -1,13 +1,12 @@
 package com.ibn.algafood.api.exception_handler;
 
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.exc.IgnoredPropertyException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.databind.exc.PropertyBindingException;
 import com.ibn.algafood.domain.exception.AlgafoodException;
 import com.ibn.algafood.domain.exception.EntidadeEmUsoException;
 import com.ibn.algafood.domain.exception.EntidadeNaoEncontradaException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,9 +14,9 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.util.Iterator;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -28,7 +27,7 @@ public class GlobalErrorHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<?> handleEntidadeNaoEncontradaException(EntidadeNaoEncontradaException e, WebRequest request) {
         HttpStatus status = HttpStatus.NOT_FOUND;
 
-        Error error = this.createErrorBuilder(status, ErrorType.ENTIDADE_NAO_ENCONTRADA, e.getMessage())
+        Error error = this.createErrorBuilder(status, ErrorType.RECURSO_NAO_ENCONTRADO, e.getMessage())
                 .build();
 
         return handleExceptionInternal(e, error, new HttpHeaders(), status, request);
@@ -66,6 +65,23 @@ public class GlobalErrorHandler extends ResponseEntityExceptionHandler {
         Error error = this.createErrorBuilder(status, ErrorType.JSON_INVALIDO, "O corpo da requisição está inválido. Verifique erro de sintaxe.").build();
 
         return this.handleExceptionInternal(ex, error, headers, status, request);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleTypeMismatch(TypeMismatchException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        if (ex instanceof MethodArgumentTypeMismatchException) {
+            var exception = (MethodArgumentTypeMismatchException) ex;
+
+            var detail = String.format("O parâmetro de URL '%s' recebeu o valor '%s', que é um tipo inválido. Corrija e informe um valor compatível com o tipo %s",
+                    exception.getName(), exception.getValue(), exception.getRequiredType().getSimpleName());
+
+            Error error = this.createErrorBuilder(status, ErrorType.PARAMETRO_INVALIDO, detail).build();
+
+            return this.handleExceptionInternal(ex, error, headers, status, request);
+        }
+        else {
+            return super.handleTypeMismatch(ex, headers, status, request);
+        }
     }
 
     private ResponseEntity<Object> handlePropertyBindingException(PropertyBindingException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
