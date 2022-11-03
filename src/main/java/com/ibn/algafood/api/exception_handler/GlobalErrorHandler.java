@@ -3,42 +3,72 @@ package com.ibn.algafood.api.exception_handler;
 import com.ibn.algafood.domain.exception.AlgafoodException;
 import com.ibn.algafood.domain.exception.EntidadeEmUsoException;
 import com.ibn.algafood.domain.exception.EntidadeNaoEncontradaException;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.time.LocalDateTime;
+import java.util.Objects;
 
 @ControllerAdvice
-public class GlobalErrorHandler {
+public class GlobalErrorHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(EntidadeNaoEncontradaException.class)
-    public ResponseEntity<Erro> handleEntidadeNaoEncontradaException(EntidadeNaoEncontradaException e) {
-        Erro erro = Erro.builder().dataHora(LocalDateTime.now()).mensagem(e.getMessage()).build();
+    public ResponseEntity<?> handleEntidadeNaoEncontradaException(EntidadeNaoEncontradaException e, WebRequest request) {
+        HttpStatus status = HttpStatus.NOT_FOUND;
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(erro);
+        Error error = this.createErrorBuilder(status, ErrorType.ENTIDADE_NAO_ENCONTRADA, e.getMessage())
+                .build();
+
+        return handleExceptionInternal(e, error, new HttpHeaders(), status, request);
     }
 
     @ExceptionHandler(AlgafoodException.class)
-    public ResponseEntity<Erro> handleAlgafoodException(AlgafoodException e) {
-        Erro erro = Erro.builder().dataHora(LocalDateTime.now()).mensagem(e.getMessage()).build();
+    public ResponseEntity<?> handleAlgafoodException(AlgafoodException e, WebRequest request) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erro);
+        Error error = this.createErrorBuilder(status, ErrorType.ALGAFOOD_EXCEPTION, e.getMessage()).build();
+
+        return handleExceptionInternal(e, error, new HttpHeaders(), status, request);
     }
 
     @ExceptionHandler(EntidadeEmUsoException.class)
-    public ResponseEntity<Erro> handleEntidadeEmUsoException(EntidadeEmUsoException e) {
-        Erro erro = Erro.builder().dataHora(LocalDateTime.now()).mensagem(e.getMessage()).build();
+    public ResponseEntity<?> handleEntidadeEmUsoException(EntidadeEmUsoException e, WebRequest request) {
+        HttpStatus status = HttpStatus.CONFLICT;
 
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(erro);
+        Error error = this.createErrorBuilder(status, ErrorType.ENTIDADE_EM_USO, e.getMessage()).build();
+
+        return handleExceptionInternal(e, error, new HttpHeaders(), status, request);
     }
 
-    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
-    public ResponseEntity<Erro> handleHttpMediaTypeNotSupportedException() {
-        Erro erro = Erro.builder().dataHora(LocalDateTime.now()).mensagem("O tipo de mídia não é aceito").build();
+    @Override
+    protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers, HttpStatus status, WebRequest request) {
 
-        return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body(erro);
+        if (Objects.nonNull(body)) {
+            body = Error.builder()
+                    .title(status.getReasonPhrase())
+                    .status(status.value())
+                    .build();
+        }
+        else if (body instanceof String) {
+            body = Error.builder()
+                    .title((String) body)
+                    .status(status.value())
+                    .build();
+        }
+
+
+        return super.handleExceptionInternal(ex, body, headers, status, request);
+    }
+
+    private Error.ErrorBuilder createErrorBuilder(HttpStatus status, ErrorType type, String detail) {
+        return Error.builder()
+                .status(status.value())
+                .type(type.getUri())
+                .title(type.getTitle())
+                .detail(detail);
     }
 }
