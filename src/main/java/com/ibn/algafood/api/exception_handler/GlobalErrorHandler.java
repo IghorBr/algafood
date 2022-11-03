@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.Objects;
@@ -82,6 +83,15 @@ public class GlobalErrorHandler extends ResponseEntityExceptionHandler {
         else {
             return super.handleTypeMismatch(ex, headers, status, request);
         }
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        var detail = String.format("O recurso %s que você tentou acessar, é inexistente.", ex.getRequestURL());
+
+        Error error = this.createErrorBuilder(status, ErrorType.RECURSO_NAO_ENCONTRADO, detail).build();
+
+        return this.handleExceptionInternal(ex, error, headers, status, request);
     }
 
     private ResponseEntity<Object> handlePropertyBindingException(PropertyBindingException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
