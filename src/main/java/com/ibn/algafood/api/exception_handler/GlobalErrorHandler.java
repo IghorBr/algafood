@@ -52,6 +52,17 @@ public class GlobalErrorHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(e, error, new HttpHeaders(), status, request);
     }
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Object> handleGenericException(Exception e, WebRequest request) {
+        var detail = "Ocorreu um erro interno inesperado no sistema. "
+                + "Tente novamente e se o problema persistir, entre em contato "
+                + "com o administrador do sistema.";
+        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+        Error error = this.createErrorBuilder(status, ErrorType.ERRO_DE_SISTEMA, detail).build();
+
+        return this.handleExceptionInternal(e, error, new HttpHeaders(), status, request);
+    }
+
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         Throwable rootCause = ExceptionUtils.getRootCause(ex);

@@ -5,6 +5,7 @@ import lombok.Getter;
 @Getter
 public enum ErrorType {
 
+    ERRO_DE_SISTEMA("Erro Interno", "/erro-interno"),
     RECURSO_NAO_ENCONTRADO("Recurso não encontrado", "/recurso-nao-encontrado"),
     ALGAFOOD_EXCEPTION("Violação da regra de negócio", "/erro-negocio"),
     ENTIDADE_EM_USO("Entidade em uso", "/entidade-em-uso"),
