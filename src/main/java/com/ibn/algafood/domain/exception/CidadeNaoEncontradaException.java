@@ -1,7 +1,5 @@
 package com.ibn.algafood.domain.exception;
 
-import org.springframework.http.HttpStatus;
-
 public class CidadeNaoEncontradaException extends EntidadeNaoEncontradaException {
 
     public CidadeNaoEncontradaException(String message) {

@@ -1,7 +1,5 @@
 package com.ibn.algafood.domain.exception;
 
-import org.springframework.http.HttpStatus;
-
 public class EstadoNaoEncontradoException extends EntidadeNaoEncontradaException {
 
     public EstadoNaoEncontradoException(String message) {
