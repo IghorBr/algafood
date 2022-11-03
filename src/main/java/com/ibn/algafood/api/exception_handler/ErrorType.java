@@ -7,7 +7,8 @@ public enum ErrorType {
 
     ENTIDADE_NAO_ENCONTRADA("Entidade não encontrada", "/entidade-nao-encontrada"),
     ALGAFOOD_EXCEPTION("Violação da regra de negócio", "/erro-negocio"),
-    ENTIDADE_EM_USO("Entidade em uso", "/entidade-em-uso")
+    ENTIDADE_EM_USO("Entidade em uso", "/entidade-em-uso"),
+    JSON_INVALIDO("JSON inválido", "/json-invalido")
     ;
 
     private final String title;
