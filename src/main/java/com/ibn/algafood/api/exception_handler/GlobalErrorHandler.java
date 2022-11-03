@@ -18,17 +18,21 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class GlobalErrorHandler extends ResponseEntityExceptionHandler {
 
+    public static final String MSG_ERRO_USUARIO_FINAL = "Ocorreu um erro interno inesperado no sistema. Tente novamente e se o problema persistir, entre em contato com o administrador do sistema.";
+
     @ExceptionHandler(EntidadeNaoEncontradaException.class)
     public ResponseEntity<?> handleEntidadeNaoEncontradaException(EntidadeNaoEncontradaException e, WebRequest request) {
         HttpStatus status = HttpStatus.NOT_FOUND;
 
         Error error = this.createErrorBuilder(status, ErrorType.RECURSO_NAO_ENCONTRADO, e.getMessage())
+                .userMessage(MSG_ERRO_USUARIO_FINAL)
                 .build();
 
         return handleExceptionInternal(e, error, new HttpHeaders(), status, request);
@@ -38,7 +42,8 @@ public class GlobalErrorHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<?> handleAlgafoodException(AlgafoodException e, WebRequest request) {
         HttpStatus status = HttpStatus.BAD_REQUEST;
 
-        Error error = this.createErrorBuilder(status, ErrorType.ALGAFOOD_EXCEPTION, e.getMessage()).build();
+        Error error = this.createErrorBuilder(status, ErrorType.ALGAFOOD_EXCEPTION, e.getMessage())
+                .userMessage(MSG_ERRO_USUARIO_FINAL).build();
 
         return handleExceptionInternal(e, error, new HttpHeaders(), status, request);
     }
@@ -47,18 +52,18 @@ public class GlobalErrorHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<?> handleEntidadeEmUsoException(EntidadeEmUsoException e, WebRequest request) {
         HttpStatus status = HttpStatus.CONFLICT;
 
-        Error error = this.createErrorBuilder(status, ErrorType.ENTIDADE_EM_USO, e.getMessage()).build();
+        Error error = this.createErrorBuilder(status, ErrorType.ENTIDADE_EM_USO, e.getMessage())
+                .userMessage(MSG_ERRO_USUARIO_FINAL).build();
 
         return handleExceptionInternal(e, error, new HttpHeaders(), status, request);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleGenericException(Exception e, WebRequest request) {
-        var detail = "Ocorreu um erro interno inesperado no sistema. "
-                + "Tente novamente e se o problema persistir, entre em contato "
-                + "com o administrador do sistema.";
+        var detail = MSG_ERRO_USUARIO_FINAL;
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
-        Error error = this.createErrorBuilder(status, ErrorType.ERRO_DE_SISTEMA, detail).build();
+        Error error = this.createErrorBuilder(status, ErrorType.ERRO_DE_SISTEMA, detail)
+                .userMessage(MSG_ERRO_USUARIO_FINAL).build();
 
         return this.handleExceptionInternal(e, error, new HttpHeaders(), status, request);
     }
@@ -74,7 +79,8 @@ public class GlobalErrorHandler extends ResponseEntityExceptionHandler {
             return handlePropertyBindingException((PropertyBindingException) rootCause, headers, status, request);
         }
 
-        Error error = this.createErrorBuilder(status, ErrorType.JSON_INVALIDO, "O corpo da requisição está inválido. Verifique erro de sintaxe.").build();
+        Error error = this.createErrorBuilder(status, ErrorType.JSON_INVALIDO, "O corpo da requisição está inválido. Verifique erro de sintaxe.")
+                .userMessage(MSG_ERRO_USUARIO_FINAL).build();
 
         return this.handleExceptionInternal(ex, error, headers, status, request);
     }
@@ -87,7 +93,8 @@ public class GlobalErrorHandler extends ResponseEntityExceptionHandler {
             var detail = String.format("O parâmetro de URL '%s' recebeu o valor '%s', que é um tipo inválido. Corrija e informe um valor compatível com o tipo %s",
                     exception.getName(), exception.getValue(), exception.getRequiredType().getSimpleName());
 
-            Error error = this.createErrorBuilder(status, ErrorType.PARAMETRO_INVALIDO, detail).build();
+            Error error = this.createErrorBuilder(status, ErrorType.PARAMETRO_INVALIDO, detail)
+                    .userMessage(MSG_ERRO_USUARIO_FINAL).build();
 
             return this.handleExceptionInternal(ex, error, headers, status, request);
         }
@@ -100,7 +107,8 @@ public class GlobalErrorHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         var detail = String.format("O recurso %s que você tentou acessar, é inexistente.", ex.getRequestURL());
 
-        Error error = this.createErrorBuilder(status, ErrorType.RECURSO_NAO_ENCONTRADO, detail).build();
+        Error error = this.createErrorBuilder(status, ErrorType.RECURSO_NAO_ENCONTRADO, detail)
+                .userMessage(MSG_ERRO_USUARIO_FINAL).build();
 
         return this.handleExceptionInternal(ex, error, headers, status, request);
     }
@@ -109,7 +117,9 @@ public class GlobalErrorHandler extends ResponseEntityExceptionHandler {
 
         String detail = String.format("A propriedade '%s' não existe na entidade %s", ex.getPropertyName(), ex.getReferringClass().getSimpleName());
 
-        Error error = this.createErrorBuilder(status, ErrorType.JSON_INVALIDO, detail).build();
+        Error error = this.createErrorBuilder(status, ErrorType.JSON_INVALIDO, detail)
+                .userMessage(MSG_ERRO_USUARIO_FINAL)
+                .build();
 
         return handleExceptionInternal(ex, error, headers, status, request);
 
@@ -123,7 +133,9 @@ public class GlobalErrorHandler extends ResponseEntityExceptionHandler {
                 "que é de um tipo inválido. Corrija informando um valor compatível com o tipo %s.",
                 field, ex.getValue(), ex.getTargetType().getSimpleName() );
 
-        Error error = this.createErrorBuilder(status, ErrorType.JSON_INVALIDO, detail).build();
+        Error error = this.createErrorBuilder(status, ErrorType.JSON_INVALIDO, detail)
+                .userMessage(MSG_ERRO_USUARIO_FINAL)
+                .build();
 
         return handleExceptionInternal(ex, error, headers, status, request);
     }
@@ -135,12 +147,16 @@ public class GlobalErrorHandler extends ResponseEntityExceptionHandler {
             body = Error.builder()
                     .title(status.getReasonPhrase())
                     .status(status.value())
+                    .timestamp(LocalDateTime.now())
+                    .userMessage(MSG_ERRO_USUARIO_FINAL)
                     .build();
         }
         else if (body instanceof String) {
             body = Error.builder()
                     .title((String) body)
                     .status(status.value())
+                    .timestamp(LocalDateTime.now())
+                    .userMessage(MSG_ERRO_USUARIO_FINAL)
                     .build();
         }
 
@@ -152,6 +168,7 @@ public class GlobalErrorHandler extends ResponseEntityExceptionHandler {
                 .status(status.value())
                 .type(type.getUri())
                 .title(type.getTitle())
-                .detail(detail);
+                .detail(detail)
+                .timestamp(LocalDateTime.now());
     }
 }
