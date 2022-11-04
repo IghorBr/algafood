@@ -1,11 +1,13 @@
 package com.ibn.algafood.api.controller;
 
+import com.ibn.algafood.api.validation.Groups;
 import com.ibn.algafood.domain.model.Cozinha;
 import com.ibn.algafood.domain.service.CozinhaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,14 +32,14 @@ public class CozinhaController {
     }
 
     @PostMapping
-    public ResponseEntity<Cozinha> save(@RequestBody Cozinha cozinha) {
+    public ResponseEntity<Cozinha> save(@RequestBody @Validated(Groups.CadastroCozinha.class) Cozinha cozinha) {
         cozinha = cozinhaService.save(cozinha);
         return ResponseEntity.status(HttpStatus.CREATED).body(cozinha);
     }
 
     @PutMapping("/{cozinhaId}")
     public ResponseEntity<Cozinha> update(@PathVariable Long cozinhaId,
-                                             @RequestBody Cozinha cozinha) {
+                                             @RequestBody @Validated(Groups.CadastroCozinha.class) Cozinha cozinha) {
         Cozinha cozinhaAtual = cozinhaService.findById(cozinhaId);
 
         BeanUtils.copyProperties(cozinha, cozinhaAtual, "id");

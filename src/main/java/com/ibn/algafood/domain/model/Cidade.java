@@ -1,9 +1,13 @@
 package com.ibn.algafood.domain.model;
 
+import com.ibn.algafood.api.validation.Groups;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 @Entity
@@ -14,9 +18,12 @@ public class Cidade {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(groups = Groups.CadastroCidade.class)
     @Column(nullable = false)
     private String nome;
 
+    @Valid
+    @NotNull(groups = Groups.CadastroCidade.class)
     @ManyToOne
     @JoinColumn(nullable = false)
     private Estado estado;

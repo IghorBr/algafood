@@ -2,6 +2,7 @@ package com.ibn.algafood.api.controller;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ibn.algafood.api.validation.Groups;
 import com.ibn.algafood.domain.exception.AlgafoodException;
 import com.ibn.algafood.domain.exception.EntidadeNaoEncontradaException;
 import com.ibn.algafood.domain.model.Restaurante;
@@ -15,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.util.ReflectionUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -69,7 +71,7 @@ public class RestauranteController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> save(@RequestBody @Valid Restaurante restaurante) {
+    public ResponseEntity<Object> save(@RequestBody @Validated(Groups.CadastroRestaurante.class) Restaurante restaurante) {
         try {
             restaurante = restauranteService.save(restaurante);
 
@@ -82,7 +84,7 @@ public class RestauranteController {
 
     @PutMapping("/{restauranteId}")
     public ResponseEntity<Object> update(@PathVariable Long restauranteId,
-                                       @RequestBody Restaurante restaurante) {
+                                       @RequestBody @Validated(Groups.CadastroRestaurante.class) Restaurante restaurante) {
         Restaurante restauranteAtual = restauranteService.findById(restauranteId);
         BeanUtils.copyProperties(restaurante, restauranteAtual, "id", "cozinha", "formasPagamento", "endereco", "dataCadastro", "dataAtualizacao");
 
