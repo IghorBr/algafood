@@ -1,18 +1,14 @@
 package com.ibn.algafood.api.controller;
 
-import com.ibn.algafood.domain.exception.EntidadeEmUsoException;
-import com.ibn.algafood.domain.exception.EntidadeNaoEncontradaException;
 import com.ibn.algafood.domain.model.Estado;
 import com.ibn.algafood.domain.service.EstadoService;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/estados")
@@ -48,7 +44,7 @@ public class EstadoController {
     }
 
     @DeleteMapping("/{estadoId}")
-    public ResponseEntity<?> remover(@PathVariable Long estadoId) {
+    public ResponseEntity<Object> remover(@PathVariable Long estadoId) {
         estadoService.deleteById(estadoId);
         return ResponseEntity.noContent().build();
     }

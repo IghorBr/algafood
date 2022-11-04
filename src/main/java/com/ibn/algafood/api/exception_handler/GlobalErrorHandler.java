@@ -21,7 +21,6 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -32,7 +31,7 @@ public class GlobalErrorHandler extends ResponseEntityExceptionHandler {
     public static final String MSG_ERRO_USUARIO_FINAL = "Ocorreu um erro interno inesperado no sistema. Tente novamente e se o problema persistir, entre em contato com o administrador do sistema.";
 
     @ExceptionHandler(EntidadeNaoEncontradaException.class)
-    public ResponseEntity<?> handleEntidadeNaoEncontradaException(EntidadeNaoEncontradaException e, WebRequest request) {
+    public ResponseEntity<Object> handleEntidadeNaoEncontradaException(EntidadeNaoEncontradaException e, WebRequest request) {
         HttpStatus status = HttpStatus.NOT_FOUND;
 
         Error error = this.createErrorBuilder(status, ErrorType.RECURSO_NAO_ENCONTRADO, e.getMessage())
@@ -43,7 +42,7 @@ public class GlobalErrorHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(AlgafoodException.class)
-    public ResponseEntity<?> handleAlgafoodException(AlgafoodException e, WebRequest request) {
+    public ResponseEntity<Object> handleAlgafoodException(AlgafoodException e, WebRequest request) {
         HttpStatus status = HttpStatus.BAD_REQUEST;
 
         Error error = this.createErrorBuilder(status, ErrorType.ALGAFOOD_EXCEPTION, e.getMessage())
@@ -53,7 +52,7 @@ public class GlobalErrorHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(EntidadeEmUsoException.class)
-    public ResponseEntity<?> handleEntidadeEmUsoException(EntidadeEmUsoException e, WebRequest request) {
+    public ResponseEntity<Object> handleEntidadeEmUsoException(EntidadeEmUsoException e, WebRequest request) {
         HttpStatus status = HttpStatus.CONFLICT;
 
         Error error = this.createErrorBuilder(status, ErrorType.ENTIDADE_EM_USO, e.getMessage())
@@ -76,9 +75,9 @@ public class GlobalErrorHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
 
         BindingResult bindingResult = ex.getBindingResult();
-        List<Error.Field> fields = bindingResult.getFieldErrors().stream().map(fe -> {
-            return Error.Field.builder().name(fe.getField()).userMessage(fe.getDefaultMessage()).build();
-        }).collect(Collectors.toList());
+        List<Error.Field> fields = bindingResult.getFieldErrors().stream().map(fe ->
+            Error.Field.builder().name(fe.getField()).userMessage(fe.getDefaultMessage()).build()
+        ).toList();
 
         Error error = this.createErrorBuilder(status, ErrorType.DADOS_INVALIDOS, "Um ou mais campos estão inválidos. Faça o preenchimento correto e tente novamente.")
                 .userMessage(MSG_ERRO_USUARIO_FINAL)

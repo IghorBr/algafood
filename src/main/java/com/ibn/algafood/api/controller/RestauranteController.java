@@ -23,7 +23,6 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/restaurantes")
@@ -70,7 +69,7 @@ public class RestauranteController {
     }
 
     @PostMapping
-    public ResponseEntity<?> save(@RequestBody @Valid Restaurante restaurante) {
+    public ResponseEntity<Object> save(@RequestBody @Valid Restaurante restaurante) {
         try {
             restaurante = restauranteService.save(restaurante);
 
@@ -82,7 +81,7 @@ public class RestauranteController {
     }
 
     @PutMapping("/{restauranteId}")
-    public ResponseEntity<?> update(@PathVariable Long restauranteId,
+    public ResponseEntity<Object> update(@PathVariable Long restauranteId,
                                        @RequestBody Restaurante restaurante) {
         Restaurante restauranteAtual = restauranteService.findById(restauranteId);
         BeanUtils.copyProperties(restaurante, restauranteAtual, "id", "cozinha", "formasPagamento", "endereco", "dataCadastro", "dataAtualizacao");
@@ -96,7 +95,7 @@ public class RestauranteController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<?> partialUpdate(@PathVariable("id") Long id, @RequestBody Map<String, Object> fields, HttpServletRequest request) {
+    public ResponseEntity<Object> partialUpdate(@PathVariable("id") Long id, @RequestBody Map<String, Object> fields, HttpServletRequest request) {
         try {
             Restaurante restaurante = retornaRestaurantePreenchido(id, fields, request);
             return this.update(id, restaurante);
@@ -125,7 +124,7 @@ public class RestauranteController {
             }
 
             return restaurante;
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | NullPointerException  e) {
             Throwable rootCause = ExceptionUtils.getRootCause(e);
             throw new HttpMessageNotReadableException(e.getMessage(), rootCause, serverHttpRequest);
         }

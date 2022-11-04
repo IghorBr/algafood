@@ -1,7 +1,6 @@
 package com.ibn.algafood.api.controller;
 
 import com.ibn.algafood.domain.exception.AlgafoodException;
-import com.ibn.algafood.domain.exception.EntidadeEmUsoException;
 import com.ibn.algafood.domain.exception.EntidadeNaoEncontradaException;
 import com.ibn.algafood.domain.exception.EstadoNaoEncontradoException;
 import com.ibn.algafood.domain.model.Cidade;
@@ -13,8 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/cidades")
@@ -36,7 +33,7 @@ public class CidadeController {
     }
 
     @PostMapping
-    public ResponseEntity<?> save(@RequestBody Cidade cidade) {
+    public ResponseEntity<Object> save(@RequestBody Cidade cidade) {
         try {
             cidade = cidadeService.save(cidade);
 
@@ -47,7 +44,7 @@ public class CidadeController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable("id") Long id, @RequestBody Cidade cidade) {
+    public ResponseEntity<Object> update(@PathVariable("id") Long id, @RequestBody Cidade cidade) {
         Cidade novaCidade = cidadeService.findById(id);
         BeanUtils.copyProperties(cidade, novaCidade, "id");
 

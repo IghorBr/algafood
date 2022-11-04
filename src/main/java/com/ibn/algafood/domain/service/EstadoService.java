@@ -1,7 +1,6 @@
 package com.ibn.algafood.domain.service;
 
 import com.ibn.algafood.domain.exception.EntidadeEmUsoException;
-import com.ibn.algafood.domain.exception.EntidadeNaoEncontradaException;
 import com.ibn.algafood.domain.exception.EstadoNaoEncontradoException;
 import com.ibn.algafood.domain.model.Estado;
 import com.ibn.algafood.domain.repository.EstadoRepository;
@@ -9,10 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor

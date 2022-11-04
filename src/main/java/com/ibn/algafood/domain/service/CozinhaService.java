@@ -1,9 +1,7 @@
 package com.ibn.algafood.domain.service;
 
-import com.ibn.algafood.domain.exception.CidadeNaoEncontradaException;
 import com.ibn.algafood.domain.exception.CozinhaNaoEncontradaException;
 import com.ibn.algafood.domain.exception.EntidadeEmUsoException;
-import com.ibn.algafood.domain.exception.EntidadeNaoEncontradaException;
 import com.ibn.algafood.domain.model.Cozinha;
 import com.ibn.algafood.domain.repository.CozinhaRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +10,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
