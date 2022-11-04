@@ -11,6 +11,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -19,6 +21,8 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -66,6 +70,22 @@ public class GlobalErrorHandler extends ResponseEntityExceptionHandler {
                 .userMessage(MSG_ERRO_USUARIO_FINAL).build();
 
         return this.handleExceptionInternal(e, error, new HttpHeaders(), status, request);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+
+        BindingResult bindingResult = ex.getBindingResult();
+        List<Error.Field> fields = bindingResult.getFieldErrors().stream().map(fe -> {
+            return Error.Field.builder().name(fe.getField()).userMessage(fe.getDefaultMessage()).build();
+        }).collect(Collectors.toList());
+
+        Error error = this.createErrorBuilder(status, ErrorType.DADOS_INVALIDOS, "Um ou mais campos estão inválidos. Faça o preenchimento correto e tente novamente.")
+                .userMessage(MSG_ERRO_USUARIO_FINAL)
+                .fields(fields)
+                .build();
+
+        return this.handleExceptionInternal(ex, error, headers, status, request);
     }
 
     @Override
