@@ -5,8 +5,11 @@ import com.fasterxml.jackson.databind.exc.PropertyBindingException;
 import com.ibn.algafood.domain.exception.AlgafoodException;
 import com.ibn.algafood.domain.exception.EntidadeEmUsoException;
 import com.ibn.algafood.domain.exception.EntidadeNaoEncontradaException;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.TypeMismatchException;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,9 +29,12 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
+@RequiredArgsConstructor
 public class GlobalErrorHandler extends ResponseEntityExceptionHandler {
 
     public static final String MSG_ERRO_USUARIO_FINAL = "Ocorreu um erro interno inesperado no sistema. Tente novamente e se o problema persistir, entre em contato com o administrador do sistema.";
+
+    private final MessageSource messageSource;
 
     @ExceptionHandler(EntidadeNaoEncontradaException.class)
     public ResponseEntity<Object> handleEntidadeNaoEncontradaException(EntidadeNaoEncontradaException e, WebRequest request) {
@@ -75,9 +81,13 @@ public class GlobalErrorHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
 
         BindingResult bindingResult = ex.getBindingResult();
-        List<Error.Field> fields = bindingResult.getFieldErrors().stream().map(fe ->
-            Error.Field.builder().name(fe.getField()).userMessage(fe.getDefaultMessage()).build()
-        ).toList();
+        List<Error.Field> fields = bindingResult.getFieldErrors().stream().map(fe ->{
+            String msg = messageSource.getMessage(fe, LocaleContextHolder.getLocale());
+
+            msg = "O atributo '" + fe.getField() + "' da entidade " + fe.getObjectName().toUpperCase() + " " + msg;
+
+            return Error.Field.builder().name(fe.getField()).userMessage(msg).build();
+        }).toList();
 
         Error error = this.createErrorBuilder(status, ErrorType.DADOS_INVALIDOS, "Um ou mais campos estão inválidos. Faça o preenchimento correto e tente novamente.")
                 .userMessage(MSG_ERRO_USUARIO_FINAL)
