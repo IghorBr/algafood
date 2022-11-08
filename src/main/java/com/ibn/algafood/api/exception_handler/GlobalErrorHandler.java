@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.exc.PropertyBindingException;
 import com.ibn.algafood.domain.exception.AlgafoodException;
 import com.ibn.algafood.domain.exception.EntidadeEmUsoException;
 import com.ibn.algafood.domain.exception.EntidadeNaoEncontradaException;
+import com.ibn.algafood.domain.exception.ValidacaoException;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.TypeMismatchException;
@@ -15,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -23,9 +25,13 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.xml.bind.ValidationException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
@@ -77,21 +83,52 @@ public class GlobalErrorHandler extends ResponseEntityExceptionHandler {
         return this.handleExceptionInternal(e, error, new HttpHeaders(), status, request);
     }
 
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException e, WebRequest request) {
+        var detail = MSG_ERRO_USUARIO_FINAL;
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        List<Error.Field> fields = e.getConstraintViolations().stream().map(cv -> {
+            return Error.Field.builder().name(cv.getPropertyPath().toString())
+                    .userMessage("O atributo '" + cv.getPropertyPath().toString() + "' " + cv.getMessage()).build();
+        }).toList();
+
+        Error error = this.createErrorBuilder(status, ErrorType.DADOS_INVALIDOS, detail)
+                .userMessage(detail)
+                .fields(fields)
+                .build();
+
+        return this.handleExceptionInternal(e, error, new HttpHeaders(), status, request);
+    }
+
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
 
+        ErrorType problemType = ErrorType.DADOS_INVALIDOS;
+        String detail = "Um ou mais campos estão inválidos. Faça o preenchimento correto e tente novamente.";
+
         BindingResult bindingResult = ex.getBindingResult();
-        List<Error.Field> fields = bindingResult.getFieldErrors().stream().map(fe ->{
-            String msg = messageSource.getMessage(fe, LocaleContextHolder.getLocale());
 
-            msg = "O atributo '" + fe.getField() + "' da entidade " + fe.getObjectName().toUpperCase() + " " + msg;
+        List<Error.Field> problemObjects = bindingResult.getAllErrors().stream()
+                .map(objectError -> {
+                    String message = messageSource.getMessage(objectError, LocaleContextHolder.getLocale());
 
-            return Error.Field.builder().name(fe.getField()).userMessage(msg).build();
-        }).toList();
+                    String name = objectError.getObjectName();
 
-        Error error = this.createErrorBuilder(status, ErrorType.DADOS_INVALIDOS, "Um ou mais campos estão inválidos. Faça o preenchimento correto e tente novamente.")
-                .userMessage(MSG_ERRO_USUARIO_FINAL)
-                .fields(fields)
+                    if (objectError instanceof FieldError) {
+                        name = ((FieldError) objectError).getField();
+                    }
+
+                    return Error.Field.builder()
+                            .name(name)
+                            .userMessage(message)
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        Error error = this.createErrorBuilder(status, problemType, detail)
+                .userMessage(detail)
+                .fields(problemObjects)
                 .build();
 
         return this.handleExceptionInternal(ex, error, headers, status, request);
@@ -171,6 +208,7 @@ public class GlobalErrorHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        ex.printStackTrace();
 
         if (Objects.isNull(body)) {
             body = Error.builder()

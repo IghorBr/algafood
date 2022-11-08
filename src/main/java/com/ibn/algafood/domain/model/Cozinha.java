@@ -1,7 +1,7 @@
 package com.ibn.algafood.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.ibn.algafood.api.validation.Groups;
+import com.ibn.algafood.core.validation.Groups;
 import lombok.Getter;
 import lombok.Setter;
 

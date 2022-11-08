@@ -1,7 +1,9 @@
 package com.ibn.algafood.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.ibn.algafood.api.validation.Groups;
+import com.ibn.algafood.core.validation.FreteGratisDescricao;
+import com.ibn.algafood.core.validation.Groups;
+import com.ibn.algafood.core.validation.Multiplo;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
@@ -9,9 +11,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import javax.validation.Valid;
-import javax.validation.constraints.*;
-import javax.validation.groups.ConvertGroup;
-import javax.validation.groups.Default;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -20,6 +22,7 @@ import java.util.Objects;
 
 @Entity
 @Getter @Setter
+@FreteGratisDescricao(valorField = "taxaFrete", descricaoField = "nome", descricaoObrigatoria = "Frete Grátis", groups = Groups.CadastroRestaurante.class)
 public class Restaurante {
 
     @Id
@@ -30,8 +33,11 @@ public class Restaurante {
     @Column(nullable = false)
     private String nome;
 
+    @NotNull
 //    @DecimalMin("0")
     @PositiveOrZero(groups = Groups.CadastroRestaurante.class)
+//    @TaxaFrete(groups = Groups.CadastroRestaurante.class)
+    @Multiplo(numero = 5, groups = Groups.CadastroRestaurante.class)
     @Column(name = "taxa_frete", nullable = false)
     private BigDecimal taxaFrete;
 

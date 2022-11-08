@@ -2,9 +2,10 @@ package com.ibn.algafood.api.controller;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ibn.algafood.api.validation.Groups;
+import com.ibn.algafood.core.validation.Groups;
 import com.ibn.algafood.domain.exception.AlgafoodException;
 import com.ibn.algafood.domain.exception.EntidadeNaoEncontradaException;
+import com.ibn.algafood.domain.exception.ValidacaoException;
 import com.ibn.algafood.domain.model.Restaurante;
 import com.ibn.algafood.domain.service.RestauranteService;
 import lombok.RequiredArgsConstructor;
@@ -16,15 +17,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.util.ReflectionUtils;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.SmartValidator;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
+import javax.validation.*;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/restaurantes")
@@ -33,6 +38,14 @@ import java.util.Map;
 public class RestauranteController {
 
     private final RestauranteService restauranteService;
+
+    private ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+    private Validator validator;
+
+    @PostConstruct
+    private void postConstruct() {
+        this.validator = factory.getValidator();
+    }
 
     @GetMapping
     public ResponseEntity<List<Restaurante>> findAll() {
@@ -100,10 +113,20 @@ public class RestauranteController {
     public ResponseEntity<Object> partialUpdate(@PathVariable("id") Long id, @RequestBody Map<String, Object> fields, HttpServletRequest request) {
         try {
             Restaurante restaurante = retornaRestaurantePreenchido(id, fields, request);
+
+            validate(restaurante, "restaurante");
+
             return this.update(id, restaurante);
         } catch (IllegalAccessException | IllegalArgumentException e ) {
             throw new AlgafoodException(e.getMessage());
         }
+    }
+
+    private void validate(Restaurante restaurante, String objectName) {
+        Set<ConstraintViolation<Restaurante>> violations = validator.validate(restaurante, Groups.CadastroRestaurante.class);
+
+        if (!violations.isEmpty())
+            throw new ConstraintViolationException(violations);
     }
 
     private Restaurante retornaRestaurantePreenchido(final Long id, Map<String, Object> fields, HttpServletRequest request) throws IllegalAccessException {

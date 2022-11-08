@@ -1,6 +1,6 @@
 package com.ibn.algafood.api.controller;
 
-import com.ibn.algafood.api.validation.Groups;
+import com.ibn.algafood.core.validation.Groups;
 import com.ibn.algafood.domain.exception.AlgafoodException;
 import com.ibn.algafood.domain.exception.EntidadeNaoEncontradaException;
 import com.ibn.algafood.domain.exception.EstadoNaoEncontradoException;
