@@ -37,7 +37,7 @@ public class Restaurante {
 //    @DecimalMin("0")
     @PositiveOrZero(groups = Groups.CadastroRestaurante.class)
 //    @TaxaFrete(groups = Groups.CadastroRestaurante.class)
-    @Multiplo(numero = 5, groups = Groups.CadastroRestaurante.class)
+//    @Multiplo(numero = 5, groups = Groups.CadastroRestaurante.class)
     @Column(name = "taxa_frete", nullable = false)
     private BigDecimal taxaFrete;
 
