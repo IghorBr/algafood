@@ -8,6 +8,7 @@ import com.ibn.algafood.domain.repository.CozinhaRepository;
 import com.ibn.algafood.domain.repository.RestauranteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -39,6 +40,7 @@ public class RestauranteService {
         return restauranteRepository.findById(id).orElseThrow(() -> new RestauranteNaoEncontradoException(id));
     }
 
+    @Transactional
     public Restaurante save(Restaurante restaurante) {
         Long cozinhaId = restaurante.getCozinha().getId();
 

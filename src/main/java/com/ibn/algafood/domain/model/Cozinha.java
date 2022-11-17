@@ -26,7 +26,6 @@ public class Cozinha {
     private String nome;
 
     @OneToMany(mappedBy = "cozinha")
-    @JsonIgnore
     private List<Restaurante> restaurantes = new ArrayList<>();
 
     @Override

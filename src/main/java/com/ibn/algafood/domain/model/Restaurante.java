@@ -1,9 +1,7 @@
 package com.ibn.algafood.domain.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ibn.algafood.core.validation.FreteGratisDescricao;
 import com.ibn.algafood.core.validation.Groups;
-import com.ibn.algafood.core.validation.Multiplo;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
@@ -41,8 +39,6 @@ public class Restaurante {
     @Column(name = "taxa_frete", nullable = false)
     private BigDecimal taxaFrete;
 
-//    @JsonIgnore
-//    @JsonIgnoreProperties("hibernateLazyInitializer")
     @Valid
 //    @ConvertGroup(from = Default.class, to = Groups.CadastroRestaurante.class)
     @NotNull(groups = Groups.CadastroRestaurante.class)
@@ -50,7 +46,6 @@ public class Restaurante {
     @JoinColumn(name = "cozinha_id", nullable = false)
     private Cozinha cozinha;
 
-    @JsonIgnore
     @Embedded
     private Endereco endereco;
 
@@ -70,7 +65,6 @@ public class Restaurante {
     private List<FormaPagamento> formasPagamento = new ArrayList<>();
 
     @OneToMany(mappedBy = "restaurante")
-    @JsonIgnore
     private List<Produto> produtos;
 
     @Override
