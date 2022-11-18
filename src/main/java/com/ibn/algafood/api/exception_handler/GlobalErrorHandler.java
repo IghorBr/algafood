@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.exc.PropertyBindingException;
 import com.ibn.algafood.domain.exception.AlgafoodException;
 import com.ibn.algafood.domain.exception.EntidadeEmUsoException;
 import com.ibn.algafood.domain.exception.EntidadeNaoEncontradaException;
-import com.ibn.algafood.domain.exception.ValidacaoException;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.TypeMismatchException;
@@ -25,13 +24,10 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-import javax.xml.bind.ValidationException;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
@@ -214,7 +210,7 @@ public class GlobalErrorHandler extends ResponseEntityExceptionHandler {
             body = Error.builder()
                     .title(status.getReasonPhrase())
                     .status(status.value())
-                    .timestamp(LocalDateTime.now())
+                    .timestamp(OffsetDateTime.now())
                     .userMessage(MSG_ERRO_USUARIO_FINAL)
                     .build();
         }
@@ -222,7 +218,7 @@ public class GlobalErrorHandler extends ResponseEntityExceptionHandler {
             body = Error.builder()
                     .title((String) body)
                     .status(status.value())
-                    .timestamp(LocalDateTime.now())
+                    .timestamp(OffsetDateTime.now())
                     .userMessage(MSG_ERRO_USUARIO_FINAL)
                     .build();
         }
@@ -236,6 +232,6 @@ public class GlobalErrorHandler extends ResponseEntityExceptionHandler {
                 .type(type.getUri())
                 .title(type.getTitle())
                 .detail(detail)
-                .timestamp(LocalDateTime.now());
+                .timestamp(OffsetDateTime.now());
     }
 }
