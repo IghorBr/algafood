@@ -9,7 +9,7 @@ import com.ibn.algafood.domain.model.Cozinha;
 import com.ibn.algafood.domain.model.Restaurante;
 import org.springframework.stereotype.Component;
 
-@Component
+//@Component
 public class JacksonMixinModule extends SimpleModule {
 
     public JacksonMixinModule() {

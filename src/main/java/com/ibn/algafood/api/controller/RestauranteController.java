@@ -2,10 +2,13 @@ package com.ibn.algafood.api.controller;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ibn.algafood.api.assembler.RestauranteDTOAssembler;
+import com.ibn.algafood.api.model.in.CozinhaInputDTO;
+import com.ibn.algafood.api.model.in.RestauranteInputDTO;
+import com.ibn.algafood.api.model.out.RestauranteOutDTO;
 import com.ibn.algafood.core.validation.Groups;
 import com.ibn.algafood.domain.exception.AlgafoodException;
 import com.ibn.algafood.domain.exception.EntidadeNaoEncontradaException;
-import com.ibn.algafood.domain.exception.ValidacaoException;
 import com.ibn.algafood.domain.model.Restaurante;
 import com.ibn.algafood.domain.service.RestauranteService;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +20,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.util.ReflectionUtils;
-import org.springframework.validation.BeanPropertyBindingResult;
-import org.springframework.validation.SmartValidator;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,8 +39,9 @@ import java.util.Set;
 public class RestauranteController {
 
     private final RestauranteService restauranteService;
+    private final RestauranteDTOAssembler restauranteAssembler;
 
-    private ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+    private final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
     private Validator validator;
 
     @PostConstruct
@@ -48,75 +50,102 @@ public class RestauranteController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Restaurante>> findAll() {
+    public ResponseEntity<List<RestauranteOutDTO>> findAll() {
         List<Restaurante> restaurantes = restauranteService.findAll();
 
         restaurantes.forEach(r -> log.info("A cozinha do restaurante " + r.getNome() + " é " + r.getCozinha().getNome()));
+        List<RestauranteOutDTO> dtos = restaurantes.stream().map(r -> restauranteAssembler.domainToOutDto(r)).sorted((a, b) -> a.getId().compareTo(b.getId())).toList();
 
-        return ResponseEntity.ok(restaurantes);
+        return ResponseEntity.ok(dtos);
     }
 
     @GetMapping("/{restauranteId}")
-    public ResponseEntity<Restaurante> findById(@PathVariable Long restauranteId) {
+    public ResponseEntity<RestauranteOutDTO> findById(@PathVariable Long restauranteId) {
         Restaurante restaurante = restauranteService.findById(restauranteId);
-        return ResponseEntity.ok(restaurante);
+
+        return ResponseEntity.ok(restauranteAssembler.domainToOutDto(restaurante));
     }
 
     @GetMapping("/por-nome")
-    public ResponseEntity<List<Restaurante>> findByName(@RequestParam("nome") String nome, @RequestParam("id") Long id) {
-        return ResponseEntity.ok(restauranteService.consultarPorNome(nome, id));
+    public ResponseEntity<List<RestauranteOutDTO>> findByName(@RequestParam("nome") String nome, @RequestParam("id") Long id) {
+        List<Restaurante> restaurantes = restauranteService.consultarPorNome(nome, id);
+
+        List<RestauranteOutDTO> dtos = restaurantes.stream().map(r -> restauranteAssembler.domainToOutDto(r)).toList();
+
+        return ResponseEntity.ok(dtos);
     }
 
     @GetMapping("/find")
-    public ResponseEntity<List<Restaurante>> find(
+    public ResponseEntity<List<RestauranteOutDTO>> find(
             @RequestParam(value = "nome", required = false) String nome,
             @RequestParam(value = "taxaInicial", required = false) BigDecimal taxaInicial,
             @RequestParam(value = "taxaFinal", required = false) BigDecimal taxaFinal
     ) {
-        return ResponseEntity.ok(restauranteService.find(nome, taxaInicial, taxaFinal));
+        List<Restaurante> restaurantes = restauranteService.find(nome, taxaInicial, taxaFinal);
+
+        List<RestauranteOutDTO> dtos = restaurantes.stream().map(r -> restauranteAssembler.domainToOutDto(r)).toList();
+
+        return ResponseEntity.ok(dtos);
     }
 
     @GetMapping("/gratuito")
-    public ResponseEntity<List<Restaurante>> findSpec(
+    public ResponseEntity<List<RestauranteOutDTO>> findSpec(
             @RequestParam(value = "nome", required = false) String nome
     ) {
-        return ResponseEntity.ok(restauranteService.findAll(nome));
+        List<Restaurante> restaurantes = restauranteService.findAll(nome);
+
+        List<RestauranteOutDTO> dtos = restaurantes.stream().map(r -> restauranteAssembler.domainToOutDto(r)).toList();
+
+        return ResponseEntity.ok(dtos);
     }
 
     @PostMapping
-    public ResponseEntity<Object> save(@RequestBody @Validated(Groups.CadastroRestaurante.class) Restaurante restaurante) {
+    public ResponseEntity<RestauranteOutDTO> save(@RequestBody @Validated(Groups.CadastroRestaurante.class) RestauranteInputDTO restauranteInput) {
         try {
+            Restaurante restaurante = restauranteAssembler.inputDtoToDomain(restauranteInput);
+
             restaurante = restauranteService.save(restaurante);
 
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(restaurante);
+                    .body(restauranteAssembler.domainToOutDto(restaurante));
         } catch (EntidadeNaoEncontradaException e) {
             throw new AlgafoodException(e.getMessage());
         }
     }
 
     @PutMapping("/{restauranteId}")
-    public ResponseEntity<Object> update(@PathVariable Long restauranteId,
-                                       @RequestBody @Validated(Groups.CadastroRestaurante.class) Restaurante restaurante) {
+    public ResponseEntity<RestauranteOutDTO> update(@PathVariable Long restauranteId,
+                                                    @RequestBody @Validated(Groups.CadastroRestaurante.class) RestauranteInputDTO restauranteInputDTO) {
         Restaurante restauranteAtual = restauranteService.findById(restauranteId);
+
+        Restaurante restaurante = restauranteAssembler.inputDtoToDomain(restauranteInputDTO);
+
         BeanUtils.copyProperties(restaurante, restauranteAtual, "id", "cozinha", "formasPagamento", "endereco", "dataCadastro", "dataAtualizacao");
 
         try {
             restauranteAtual = restauranteService.save(restauranteAtual);
-            return ResponseEntity.ok(restauranteAtual);
+            return ResponseEntity.ok(restauranteAssembler.domainToOutDto(restauranteAtual));
         } catch (EntidadeNaoEncontradaException e) {
             throw new AlgafoodException(e.getMessage());
         }
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Object> partialUpdate(@PathVariable("id") Long id, @RequestBody Map<String, Object> fields, HttpServletRequest request) {
+    public ResponseEntity<RestauranteOutDTO> partialUpdate(@PathVariable("id") Long id, @RequestBody Map<String, Object> fields, HttpServletRequest request) {
         try {
             Restaurante restaurante = retornaRestaurantePreenchido(id, fields, request);
 
             validate(restaurante, "restaurante");
 
-            return this.update(id, restaurante);
+            CozinhaInputDTO cozinhaInput = new CozinhaInputDTO();
+            cozinhaInput.setId(restaurante.getCozinha().getId());
+
+            RestauranteInputDTO restauranteInput = new RestauranteInputDTO();
+            restauranteInput.setNome(restaurante.getNome());
+            restauranteInput.setTaxaFrete(restaurante.getTaxaFrete());
+            restauranteInput.setCozinha(cozinhaInput);
+
+            return this.update(id, restauranteInput);
         } catch (IllegalAccessException | IllegalArgumentException e ) {
             throw new AlgafoodException(e.getMessage());
         }
