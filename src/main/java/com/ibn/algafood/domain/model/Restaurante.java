@@ -28,13 +28,13 @@ public class Restaurante {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(groups = Groups.CadastroRestaurante.class)
+    @NotBlank
     @Column(nullable = false)
     private String nome;
 
     @NotNull
 //    @DecimalMin("0")
-    @PositiveOrZero(groups = Groups.CadastroRestaurante.class)
+    @PositiveOrZero
 //    @TaxaFrete(groups = Groups.CadastroRestaurante.class)
 //    @Multiplo(numero = 5, groups = Groups.CadastroRestaurante.class)
     @Column(name = "taxa_frete", nullable = false)
@@ -42,7 +42,7 @@ public class Restaurante {
 
     @Valid
 //    @ConvertGroup(from = Default.class, to = Groups.CadastroRestaurante.class)
-    @NotNull(groups = Groups.CadastroRestaurante.class)
+    @NotNull
     @ManyToOne // (fetch = FetchType.LAZY)
     @JoinColumn(name = "cozinha_id", nullable = false)
     private Cozinha cozinha;

@@ -16,12 +16,11 @@ import java.util.Objects;
 @Getter @Setter
 public class Cozinha {
 
-    @NotNull(groups = Groups.CadastroRestaurante.class)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(groups = Groups.CadastroCozinha.class)
+    @NotBlank
     @Column(nullable = false)
     private String nome;
 

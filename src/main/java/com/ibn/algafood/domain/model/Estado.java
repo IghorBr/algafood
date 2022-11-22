@@ -13,12 +13,11 @@ import java.util.Objects;
 @Getter @Setter
 public class Estado {
 
-    @NotNull(groups = Groups.CadastroCidade.class)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(groups = Groups.CadastroEstado.class)
+    @NotBlank
     @Column(nullable = false)
     private String nome;
 

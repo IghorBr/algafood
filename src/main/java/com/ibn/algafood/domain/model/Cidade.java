@@ -23,7 +23,7 @@ public class Cidade {
     private String nome;
 
     @Valid
-    @NotNull(groups = Groups.CadastroCidade.class)
+    @NotNull
     @ManyToOne
     @JoinColumn(nullable = false)
     private Estado estado;

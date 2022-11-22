@@ -18,26 +18,15 @@ public class FormaPagamento {
     @Column(nullable = false)
     private String descricao;
 
-    public boolean equals(final Object o) {
-        if (o == this) return true;
-        if (!(o instanceof FormaPagamento)) return false;
-        final FormaPagamento other = (FormaPagamento) o;
-        if (!other.canEqual((Object) this)) return false;
-        final Object this$id = this.getId();
-        final Object other$id = other.getId();
-        if (!Objects.equals(this$id, other$id)) return false;
-        return true;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof FormaPagamento that)) return false;
+        return Objects.equals(getId(), that.getId());
     }
 
-    protected boolean canEqual(final Object other) {
-        return other instanceof FormaPagamento;
-    }
-
+    @Override
     public int hashCode() {
-        final int PRIME = 59;
-        int result = 1;
-        final Object $id = this.getId();
-        result = result * PRIME + ($id == null ? 43 : $id.hashCode());
-        return result;
+        return Objects.hash(getId());
     }
 }
