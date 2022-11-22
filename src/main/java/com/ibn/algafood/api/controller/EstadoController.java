@@ -1,5 +1,7 @@
 package com.ibn.algafood.api.controller;
 
+import com.ibn.algafood.api.assembler.EstadoDTOAssembler;
+import com.ibn.algafood.api.model.out.EstadoOutDTO;
 import com.ibn.algafood.core.validation.Groups;
 import com.ibn.algafood.domain.model.Estado;
 import com.ibn.algafood.domain.service.EstadoService;
@@ -18,35 +20,38 @@ import java.util.List;
 public class EstadoController {
 
     private final EstadoService estadoService;
+    private final EstadoDTOAssembler estadoAssembler;
 
     @GetMapping
-    public ResponseEntity<List<Estado>> findAll() {
-        return ResponseEntity.ok(estadoService.findAll());
+    public ResponseEntity<List<EstadoOutDTO>> findAll() {
+        List<Estado> estados = estadoService.findAll();
+        return ResponseEntity.ok(estadoAssembler.domainListToDto(estados));
     }
 
     @GetMapping("/{estadoId}")
-    public ResponseEntity<Estado> findById(@PathVariable Long estadoId) {
+    public ResponseEntity<EstadoOutDTO> findById(@PathVariable Long estadoId) {
         Estado estado = estadoService.findById(estadoId);
-        return ResponseEntity.ok(estado);
+        return ResponseEntity.ok(estadoAssembler.domainToDto(estado));
     }
 
     @PostMapping
-    public ResponseEntity<Estado> save(@RequestBody @Validated(Groups.CadastroEstado.class) Estado estado) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(estadoService.save(estado));
+    public ResponseEntity<EstadoOutDTO> save(@RequestBody @Validated(Groups.CadastroEstado.class) Estado estado) {
+        estado = estadoService.save(estado);
+        return ResponseEntity.status(HttpStatus.CREATED).body(estadoAssembler.domainToDto(estado));
     }
 
     @PutMapping("/{estadoId}")
-    public ResponseEntity<Estado> update(@PathVariable Long estadoId,
+    public ResponseEntity<EstadoOutDTO> update(@PathVariable Long estadoId,
                                             @RequestBody @Validated(Groups.CadastroEstado.class) Estado estado) {
         Estado estadoAtual = estadoService.findById(estadoId);
 
         BeanUtils.copyProperties(estado, estadoAtual, "id");
         estadoAtual = estadoService.save(estadoAtual);
-        return ResponseEntity.ok(estadoAtual);
+        return ResponseEntity.ok(estadoAssembler.domainToDto(estadoAtual));
     }
 
     @DeleteMapping("/{estadoId}")
-    public ResponseEntity<Object> remover(@PathVariable Long estadoId) {
+    public ResponseEntity<Void> remover(@PathVariable Long estadoId) {
         estadoService.deleteById(estadoId);
         return ResponseEntity.noContent().build();
     }

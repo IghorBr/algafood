@@ -1,5 +1,7 @@
 package com.ibn.algafood.api.controller;
 
+import com.ibn.algafood.api.assembler.CozinhaDTOAssembler;
+import com.ibn.algafood.api.model.out.CozinhaOutDTO;
 import com.ibn.algafood.core.validation.Groups;
 import com.ibn.algafood.domain.model.Cozinha;
 import com.ibn.algafood.domain.service.CozinhaService;
@@ -18,33 +20,36 @@ import java.util.List;
 public class CozinhaController {
 
     private final CozinhaService cozinhaService;
+    private final CozinhaDTOAssembler cozinhaAssembler;
 
     @GetMapping
-    public ResponseEntity<List<Cozinha>> findAll() {
-        return ResponseEntity.ok(cozinhaService.findAll());
+    public ResponseEntity<List<CozinhaOutDTO>> findAll() {
+        List<Cozinha> cozinhas = cozinhaService.findAll();
+
+        return ResponseEntity.ok(cozinhaAssembler.domainListToDto(cozinhas));
     }
 
     @GetMapping("/{cozinhaId}")
-    public ResponseEntity<Cozinha> findById(@PathVariable Long cozinhaId) {
+    public ResponseEntity<CozinhaOutDTO> findById(@PathVariable Long cozinhaId) {
         Cozinha cozinha = cozinhaService.findById(cozinhaId);
 
-        return ResponseEntity.ok(cozinha);
+        return ResponseEntity.ok(cozinhaAssembler.domainToDto(cozinha));
     }
 
     @PostMapping
-    public ResponseEntity<Cozinha> save(@RequestBody @Validated(Groups.CadastroCozinha.class) Cozinha cozinha) {
+    public ResponseEntity<CozinhaOutDTO> save(@RequestBody @Validated(Groups.CadastroCozinha.class) Cozinha cozinha) {
         cozinha = cozinhaService.save(cozinha);
-        return ResponseEntity.status(HttpStatus.CREATED).body(cozinha);
+        return ResponseEntity.status(HttpStatus.CREATED).body(cozinhaAssembler.domainToDto(cozinha));
     }
 
     @PutMapping("/{cozinhaId}")
-    public ResponseEntity<Cozinha> update(@PathVariable Long cozinhaId,
+    public ResponseEntity<CozinhaOutDTO> update(@PathVariable Long cozinhaId,
                                              @RequestBody @Validated(Groups.CadastroCozinha.class) Cozinha cozinha) {
         Cozinha cozinhaAtual = cozinhaService.findById(cozinhaId);
 
         BeanUtils.copyProperties(cozinha, cozinhaAtual, "id");
         Cozinha cozinhaSalva = cozinhaService.save(cozinhaAtual);
-        return ResponseEntity.ok(cozinhaSalva);
+        return ResponseEntity.ok(cozinhaAssembler.domainToDto(cozinhaSalva));
     }
 
     @DeleteMapping("/{cozinhaId}")

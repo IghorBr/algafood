@@ -120,7 +120,9 @@ public class RestauranteController {
 
         Restaurante restaurante = restauranteAssembler.inputDtoToDomain(restauranteInputDTO);
 
-        BeanUtils.copyProperties(restaurante, restauranteAtual, "id", "cozinha", "formasPagamento", "endereco", "dataCadastro", "dataAtualizacao");
+        restauranteAssembler.copyToDomainObject(restauranteInputDTO, restauranteAtual);
+
+//        BeanUtils.copyProperties(restaurante, restauranteAtual, "id", "cozinha", "formasPagamento", "endereco", "dataCadastro", "dataAtualizacao");
 
         try {
             restauranteAtual = restauranteService.save(restauranteAtual);
