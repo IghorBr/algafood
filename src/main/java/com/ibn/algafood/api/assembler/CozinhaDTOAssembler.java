@@ -1,5 +1,6 @@
 package com.ibn.algafood.api.assembler;
 
+import com.ibn.algafood.api.model.in.CozinhaInputDTO;
 import com.ibn.algafood.api.model.out.CozinhaOutDTO;
 import com.ibn.algafood.domain.model.Cozinha;
 import lombok.RequiredArgsConstructor;
@@ -20,5 +21,13 @@ public class CozinhaDTOAssembler {
 
     public List<CozinhaOutDTO> domainListToDto(List<Cozinha> cozinhas) {
         return cozinhas.stream().map(c -> this.domainToDto(c)).toList();
+    }
+
+    public Cozinha inputDtoToDomain(CozinhaInputDTO input) {
+        return mapper.map(input, Cozinha.class);
+    }
+
+    public void copyToDomainObject(CozinhaInputDTO dto, Cozinha cozinha) {
+        mapper.map(dto, cozinha);
     }
 }

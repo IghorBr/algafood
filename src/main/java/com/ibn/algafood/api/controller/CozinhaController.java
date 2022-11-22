@@ -1,6 +1,7 @@
 package com.ibn.algafood.api.controller;
 
 import com.ibn.algafood.api.assembler.CozinhaDTOAssembler;
+import com.ibn.algafood.api.model.in.CozinhaInputDTO;
 import com.ibn.algafood.api.model.out.CozinhaOutDTO;
 import com.ibn.algafood.core.validation.Groups;
 import com.ibn.algafood.domain.model.Cozinha;
@@ -37,17 +38,21 @@ public class CozinhaController {
     }
 
     @PostMapping
-    public ResponseEntity<CozinhaOutDTO> save(@RequestBody @Validated(Groups.CadastroCozinha.class) Cozinha cozinha) {
+    public ResponseEntity<CozinhaOutDTO> save(@RequestBody @Validated(Groups.CadastroCozinha.class) CozinhaInputDTO cozinhaInputDTO) {
+        Cozinha cozinha = cozinhaAssembler.inputDtoToDomain(cozinhaInputDTO);
+
         cozinha = cozinhaService.save(cozinha);
         return ResponseEntity.status(HttpStatus.CREATED).body(cozinhaAssembler.domainToDto(cozinha));
     }
 
     @PutMapping("/{cozinhaId}")
     public ResponseEntity<CozinhaOutDTO> update(@PathVariable Long cozinhaId,
-                                             @RequestBody @Validated(Groups.CadastroCozinha.class) Cozinha cozinha) {
+                                             @RequestBody @Validated(Groups.CadastroCozinha.class) CozinhaInputDTO cozinhaInputDTO) {
         Cozinha cozinhaAtual = cozinhaService.findById(cozinhaId);
 
-        BeanUtils.copyProperties(cozinha, cozinhaAtual, "id");
+        cozinhaAssembler.copyToDomainObject(cozinhaInputDTO, cozinhaAtual);
+
+//        BeanUtils.copyProperties(cozinha, cozinhaAtual, "id");
         Cozinha cozinhaSalva = cozinhaService.save(cozinhaAtual);
         return ResponseEntity.ok(cozinhaAssembler.domainToDto(cozinhaSalva));
     }

@@ -1,6 +1,7 @@
 package com.ibn.algafood.api.controller;
 
 import com.ibn.algafood.api.assembler.CidadeDTOAssembler;
+import com.ibn.algafood.api.model.in.CidadeInputDTO;
 import com.ibn.algafood.api.model.out.CidadeOutDTO;
 import com.ibn.algafood.core.validation.Groups;
 import com.ibn.algafood.domain.exception.AlgafoodException;
@@ -40,9 +41,11 @@ public class CidadeController {
     }
 
     @PostMapping
-    public ResponseEntity<CidadeOutDTO> save(@RequestBody @Validated(Groups.CadastroCidade.class) Cidade cidade) {
+    public ResponseEntity<CidadeOutDTO> save(@RequestBody @Validated(Groups.CadastroCidade.class) CidadeInputDTO cidadeInputDTO) {
         try {
-            cidade = cidadeService.save(cidade);
+            Cidade cidade = cidadeService.save(
+                    cidadeAssembler.inputDtoToDomain(cidadeInputDTO)
+            );
 
             return ResponseEntity.status(HttpStatus.CREATED).body(cidadeAssembler.domainToDto(cidade));
         } catch (EstadoNaoEncontradoException e) {
@@ -51,13 +54,15 @@ public class CidadeController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CidadeOutDTO> update(@PathVariable("id") Long id, @RequestBody @Validated(Groups.CadastroCidade.class) Cidade cidade) {
-        Cidade novaCidade = cidadeService.findById(id);
-        BeanUtils.copyProperties(cidade, novaCidade, "id");
+    public ResponseEntity<CidadeOutDTO> update(@PathVariable("id") Long id, @RequestBody @Validated(Groups.CadastroCidade.class) CidadeInputDTO cidadeInput) {
+        Cidade cidadeAtual = cidadeService.findById(id);
+        cidadeAssembler.copyToDomainObject(cidadeInput, cidadeAtual);
+
+//        BeanUtils.copyProperties(cidade, cidadeAtual, "id");
 
         try {
-            novaCidade = cidadeService.save(novaCidade);
-            return ResponseEntity.ok(cidadeAssembler.domainToDto(novaCidade));
+            cidadeAtual = cidadeService.save(cidadeAtual);
+            return ResponseEntity.ok(cidadeAssembler.domainToDto(cidadeAtual));
         } catch (EstadoNaoEncontradoException e) {
             throw new EntidadeNaoEncontradaException(e.getMessage());
         }

@@ -139,7 +139,7 @@ public class RestauranteController {
 
             validate(restaurante, "restaurante");
 
-            CozinhaInputDTO cozinhaInput = new CozinhaInputDTO();
+            RestauranteInputDTO.CozinhaInputDTO cozinhaInput = new RestauranteInputDTO.CozinhaInputDTO();
             cozinhaInput.setId(restaurante.getCozinha().getId());
 
             RestauranteInputDTO restauranteInput = new RestauranteInputDTO();

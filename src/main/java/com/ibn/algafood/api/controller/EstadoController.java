@@ -1,6 +1,7 @@
 package com.ibn.algafood.api.controller;
 
 import com.ibn.algafood.api.assembler.EstadoDTOAssembler;
+import com.ibn.algafood.api.model.in.EstadoInputDTO;
 import com.ibn.algafood.api.model.out.EstadoOutDTO;
 import com.ibn.algafood.core.validation.Groups;
 import com.ibn.algafood.domain.model.Estado;
@@ -35,17 +36,21 @@ public class EstadoController {
     }
 
     @PostMapping
-    public ResponseEntity<EstadoOutDTO> save(@RequestBody @Validated(Groups.CadastroEstado.class) Estado estado) {
+    public ResponseEntity<EstadoOutDTO> save(@RequestBody @Validated(Groups.CadastroEstado.class) EstadoInputDTO estadoInputDTO) {
+        Estado estado = estadoAssembler.inputDtoToDomain(estadoInputDTO);
+
         estado = estadoService.save(estado);
         return ResponseEntity.status(HttpStatus.CREATED).body(estadoAssembler.domainToDto(estado));
     }
 
     @PutMapping("/{estadoId}")
     public ResponseEntity<EstadoOutDTO> update(@PathVariable Long estadoId,
-                                            @RequestBody @Validated(Groups.CadastroEstado.class) Estado estado) {
+                                            @RequestBody @Validated(Groups.CadastroEstado.class) EstadoInputDTO estadoInputDTO) {
         Estado estadoAtual = estadoService.findById(estadoId);
 
-        BeanUtils.copyProperties(estado, estadoAtual, "id");
+        estadoAssembler.copyToDomainObject(estadoInputDTO, estadoAtual);
+
+//        BeanUtils.copyProperties(estado, estadoAtual, "id");
         estadoAtual = estadoService.save(estadoAtual);
         return ResponseEntity.ok(estadoAssembler.domainToDto(estadoAtual));
     }

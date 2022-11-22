@@ -7,8 +7,8 @@ import lombok.Setter;
 import javax.validation.constraints.NotBlank;
 
 @Getter @Setter
-public class CozinhaInputDTO {
+public class EstadoInputDTO {
 
-    @NotBlank(groups = Groups.CadastroCozinha.class)
+    @NotBlank(groups = Groups.CadastroEstado.class)
     private String nome;
 }

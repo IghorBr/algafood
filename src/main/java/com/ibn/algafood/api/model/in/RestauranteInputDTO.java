@@ -22,4 +22,11 @@ public class RestauranteInputDTO {
     @Valid
     @NotNull(groups = Groups.CadastroRestaurante.class)
     private CozinhaInputDTO cozinha;
+
+    @Getter @Setter
+    public static class CozinhaInputDTO {
+
+        @NotNull(groups = Groups.CadastroRestaurante.class)
+        private Long id;
+    }
 }
