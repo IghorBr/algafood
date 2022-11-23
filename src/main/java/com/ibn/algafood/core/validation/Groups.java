@@ -7,4 +7,5 @@ public interface Groups {
     interface CadastroCidade {}
     interface CadastroEstado {}
     interface CadastroFormaPagamento {}
+    interface CadastroGrupo {}
 }

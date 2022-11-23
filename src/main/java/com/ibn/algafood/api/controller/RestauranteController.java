@@ -2,7 +2,7 @@ package com.ibn.algafood.api.controller;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ibn.algafood.api.assembler.RestauranteMapper;
+import com.ibn.algafood.api.mapper.RestauranteMapper;
 import com.ibn.algafood.api.model.in.RestauranteInputDTO;
 import com.ibn.algafood.api.model.out.RestauranteOutDTO;
 import com.ibn.algafood.core.validation.Groups;
@@ -116,8 +116,6 @@ public class RestauranteController {
                                                     @RequestBody @Validated(Groups.CadastroRestaurante.class) RestauranteInputDTO restauranteInputDTO) {
         Restaurante restauranteAtual = restauranteService.findById(restauranteId);
 
-        Restaurante restaurante = restauranteAssembler.inputDtoToDomain(restauranteInputDTO);
-
         restauranteAssembler.copyToDomainObject(restauranteInputDTO, restauranteAtual);
 
 //        BeanUtils.copyProperties(restaurante, restauranteAtual, "id", "cozinha", "formasPagamento", "endereco", "dataCadastro", "dataAtualizacao");
@@ -135,7 +133,7 @@ public class RestauranteController {
         try {
             Restaurante restaurante = retornaRestaurantePreenchido(id, fields, request);
 
-            validate(restaurante, "restaurante");
+            validate(restaurante);
 
             RestauranteInputDTO.CozinhaInputDTO cozinhaInput = new RestauranteInputDTO.CozinhaInputDTO();
             cozinhaInput.setId(restaurante.getCozinha().getId());
@@ -163,7 +161,7 @@ public class RestauranteController {
         return ResponseEntity.noContent().build();
     }
 
-    private void validate(Restaurante restaurante, String objectName) {
+    private void validate(Restaurante restaurante) {
         Set<ConstraintViolation<Restaurante>> violations = validator.validate(restaurante, Groups.CadastroRestaurante.class);
 
         if (!violations.isEmpty())

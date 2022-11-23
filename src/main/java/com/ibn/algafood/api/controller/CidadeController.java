@@ -1,6 +1,6 @@
 package com.ibn.algafood.api.controller;
 
-import com.ibn.algafood.api.assembler.CidadeMapper;
+import com.ibn.algafood.api.mapper.CidadeMapper;
 import com.ibn.algafood.api.model.in.CidadeInputDTO;
 import com.ibn.algafood.api.model.out.CidadeOutDTO;
 import com.ibn.algafood.core.validation.Groups;

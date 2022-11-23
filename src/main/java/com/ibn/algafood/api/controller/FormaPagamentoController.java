@@ -1,11 +1,9 @@
 package com.ibn.algafood.api.controller;
 
-import com.ibn.algafood.api.assembler.FormaPagamentoMapper;
+import com.ibn.algafood.api.mapper.FormaPagamentoMapper;
 import com.ibn.algafood.api.model.in.FormaPagamentoInputDTO;
 import com.ibn.algafood.api.model.out.FormaPagamentoOutDTO;
 import com.ibn.algafood.core.validation.Groups;
-import com.ibn.algafood.domain.exception.AlgafoodException;
-import com.ibn.algafood.domain.exception.FormaPagamentoNaoEncontradaException;
 import com.ibn.algafood.domain.model.FormaPagamento;
 import com.ibn.algafood.domain.service.FormaPagamentoService;
 import lombok.RequiredArgsConstructor;

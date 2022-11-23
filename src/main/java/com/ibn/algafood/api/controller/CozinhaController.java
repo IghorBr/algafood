@@ -1,6 +1,6 @@
 package com.ibn.algafood.api.controller;
 
-import com.ibn.algafood.api.assembler.CozinhaMapper;
+import com.ibn.algafood.api.mapper.CozinhaMapper;
 import com.ibn.algafood.api.model.in.CozinhaInputDTO;
 import com.ibn.algafood.api.model.out.CozinhaOutDTO;
 import com.ibn.algafood.core.validation.Groups;

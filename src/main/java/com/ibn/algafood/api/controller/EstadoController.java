@@ -1,6 +1,6 @@
 package com.ibn.algafood.api.controller;
 
-import com.ibn.algafood.api.assembler.EstadoMapper;
+import com.ibn.algafood.api.mapper.EstadoMapper;
 import com.ibn.algafood.api.model.in.EstadoInputDTO;
 import com.ibn.algafood.api.model.out.EstadoOutDTO;
 import com.ibn.algafood.core.validation.Groups;

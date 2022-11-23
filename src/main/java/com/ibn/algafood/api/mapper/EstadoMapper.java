@@ -1,4 +1,4 @@
-package com.ibn.algafood.api.assembler;
+package com.ibn.algafood.api.mapper;
 
 import com.ibn.algafood.api.model.in.EstadoInputDTO;
 import com.ibn.algafood.api.model.out.EstadoOutDTO;
