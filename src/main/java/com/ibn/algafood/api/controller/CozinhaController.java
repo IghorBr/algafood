@@ -1,13 +1,12 @@
 package com.ibn.algafood.api.controller;
 
-import com.ibn.algafood.api.assembler.CozinhaDTOAssembler;
+import com.ibn.algafood.api.assembler.CozinhaMapper;
 import com.ibn.algafood.api.model.in.CozinhaInputDTO;
 import com.ibn.algafood.api.model.out.CozinhaOutDTO;
 import com.ibn.algafood.core.validation.Groups;
 import com.ibn.algafood.domain.model.Cozinha;
 import com.ibn.algafood.domain.service.CozinhaService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -21,7 +20,7 @@ import java.util.List;
 public class CozinhaController {
 
     private final CozinhaService cozinhaService;
-    private final CozinhaDTOAssembler cozinhaAssembler;
+    private final CozinhaMapper cozinhaAssembler;
 
     @GetMapping
     public ResponseEntity<List<CozinhaOutDTO>> findAll() {

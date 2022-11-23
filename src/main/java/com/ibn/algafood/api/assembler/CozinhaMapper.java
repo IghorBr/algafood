@@ -11,7 +11,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class CozinhaDTOAssembler {
+public class CozinhaMapper {
 
     private final ModelMapper mapper;
 

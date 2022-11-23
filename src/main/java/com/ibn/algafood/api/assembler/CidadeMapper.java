@@ -12,7 +12,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class CidadeDTOAssembler {
+public class CidadeMapper {
 
     private final ModelMapper mapper;
 

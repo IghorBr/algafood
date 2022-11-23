@@ -1,13 +1,12 @@
 package com.ibn.algafood.api.controller;
 
-import com.ibn.algafood.api.assembler.EstadoDTOAssembler;
+import com.ibn.algafood.api.assembler.EstadoMapper;
 import com.ibn.algafood.api.model.in.EstadoInputDTO;
 import com.ibn.algafood.api.model.out.EstadoOutDTO;
 import com.ibn.algafood.core.validation.Groups;
 import com.ibn.algafood.domain.model.Estado;
 import com.ibn.algafood.domain.service.EstadoService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -21,7 +20,7 @@ import java.util.List;
 public class EstadoController {
 
     private final EstadoService estadoService;
-    private final EstadoDTOAssembler estadoAssembler;
+    private final EstadoMapper estadoAssembler;
 
     @GetMapping
     public ResponseEntity<List<EstadoOutDTO>> findAll() {

@@ -2,8 +2,7 @@ package com.ibn.algafood.api.controller;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ibn.algafood.api.assembler.RestauranteDTOAssembler;
-import com.ibn.algafood.api.model.in.CozinhaInputDTO;
+import com.ibn.algafood.api.assembler.RestauranteMapper;
 import com.ibn.algafood.api.model.in.RestauranteInputDTO;
 import com.ibn.algafood.api.model.out.RestauranteOutDTO;
 import com.ibn.algafood.core.validation.Groups;
@@ -14,7 +13,6 @@ import com.ibn.algafood.domain.service.RestauranteService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -39,7 +37,7 @@ import java.util.Set;
 public class RestauranteController {
 
     private final RestauranteService restauranteService;
-    private final RestauranteDTOAssembler restauranteAssembler;
+    private final RestauranteMapper restauranteAssembler;
 
     private final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
     private Validator validator;

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class RestauranteDTOAssembler {
+public class RestauranteMapper {
 
     private final ModelMapper mapper;
 

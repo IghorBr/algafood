@@ -1,6 +1,6 @@
 package com.ibn.algafood.api.controller;
 
-import com.ibn.algafood.api.assembler.CidadeDTOAssembler;
+import com.ibn.algafood.api.assembler.CidadeMapper;
 import com.ibn.algafood.api.model.in.CidadeInputDTO;
 import com.ibn.algafood.api.model.out.CidadeOutDTO;
 import com.ibn.algafood.core.validation.Groups;
@@ -10,7 +10,6 @@ import com.ibn.algafood.domain.exception.EstadoNaoEncontradoException;
 import com.ibn.algafood.domain.model.Cidade;
 import com.ibn.algafood.domain.service.CidadeService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -24,7 +23,7 @@ import java.util.List;
 public class CidadeController {
 
     private final CidadeService cidadeService;
-    private final CidadeDTOAssembler cidadeAssembler;
+    private final CidadeMapper cidadeAssembler;
 
     @GetMapping
     public ResponseEntity<List<CidadeOutDTO>> findAll() {

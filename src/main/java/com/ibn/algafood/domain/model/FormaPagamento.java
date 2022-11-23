@@ -1,9 +1,11 @@
 package com.ibn.algafood.domain.model;
 
+import com.ibn.algafood.core.validation.Groups;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.Objects;
 
 @Entity
@@ -16,6 +18,7 @@ public class FormaPagamento {
     private Long id;
 
     @Column(nullable = false)
+    @NotBlank(groups = Groups.CadastroFormaPagamento.class)
     private String descricao;
 
     @Override

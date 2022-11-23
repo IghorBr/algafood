@@ -11,7 +11,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class EstadoDTOAssembler {
+public class EstadoMapper {
 
     private final ModelMapper mapper;
 
