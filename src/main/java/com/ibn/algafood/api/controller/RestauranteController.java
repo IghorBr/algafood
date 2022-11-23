@@ -153,6 +153,18 @@ public class RestauranteController {
         }
     }
 
+    @PutMapping("/{id}/ativo")
+    public ResponseEntity<Void> ativar(@PathVariable("id") Long id) {
+        restauranteService.ativar(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{id}/ativo")
+    public ResponseEntity<Void> inativar(@PathVariable("id") Long id) {
+        restauranteService.inativar(id);
+        return ResponseEntity.noContent().build();
+    }
+
     private void validate(Restaurante restaurante, String objectName) {
         Set<ConstraintViolation<Restaurante>> violations = validator.validate(restaurante, Groups.CadastroRestaurante.class);
 

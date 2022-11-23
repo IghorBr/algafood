@@ -49,4 +49,24 @@ public class RestauranteService {
         restaurante.setCozinha(cozinha);
         return restauranteRepository.save(restaurante);
     }
+
+    @Transactional
+    public void ativar(Long restauranteId) {
+        Restaurante restaurante = this.findById(restauranteId);
+
+        restaurante.ativar();
+
+        // não é necessário fazer isso, mas para deixar explicito
+        restauranteRepository.save(restaurante);
+    }
+
+    @Transactional
+    public void inativar(Long restauranteId) {
+        Restaurante restaurante = this.findById(restauranteId);
+
+        restaurante.inativar();
+
+        // não é necessário fazer isso, mas para deixar explicito
+        restauranteRepository.save(restaurante);
+    }
 }

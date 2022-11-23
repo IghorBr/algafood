@@ -13,5 +13,6 @@ public class RestauranteOutDTO {
     private Long id;
     private String nome;
     private BigDecimal taxaFrete;
+    private Boolean ativo;
     private CozinhaOutDTO cozinha;
 }

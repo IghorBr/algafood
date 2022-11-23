@@ -28,13 +28,13 @@ public class Restaurante {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
+    @NotBlank(groups = Groups.CadastroRestaurante.class)
     @Column(nullable = false)
     private String nome;
 
-    @NotNull
+    @NotNull(groups = Groups.CadastroRestaurante.class)
 //    @DecimalMin("0")
-    @PositiveOrZero
+    @PositiveOrZero(groups = Groups.CadastroRestaurante.class)
 //    @TaxaFrete(groups = Groups.CadastroRestaurante.class)
 //    @Multiplo(numero = 5, groups = Groups.CadastroRestaurante.class)
     @Column(name = "taxa_frete", nullable = false)
@@ -42,7 +42,7 @@ public class Restaurante {
 
     @Valid
 //    @ConvertGroup(from = Default.class, to = Groups.CadastroRestaurante.class)
-    @NotNull
+    @NotNull(groups = Groups.CadastroRestaurante.class)
     @ManyToOne // (fetch = FetchType.LAZY)
     @JoinColumn(name = "cozinha_id", nullable = false)
     private Cozinha cozinha;
@@ -58,6 +58,8 @@ public class Restaurante {
     @UpdateTimestamp
     private OffsetDateTime dataAtualizacao;
 
+    private Boolean ativo = Boolean.TRUE;
+
     @ManyToMany
     @JoinTable(name = "RESTAURANTE_FORMA_PAGAMENTO",
             joinColumns = @JoinColumn(name = "restaurante_id"),
@@ -67,6 +69,14 @@ public class Restaurante {
 
     @OneToMany(mappedBy = "restaurante")
     private List<Produto> produtos;
+
+    public void ativar() {
+        this.setAtivo(true);
+    }
+
+    public void inativar() {
+        this.setAtivo(false);
+    }
 
     @Override
     public boolean equals(Object o) {
