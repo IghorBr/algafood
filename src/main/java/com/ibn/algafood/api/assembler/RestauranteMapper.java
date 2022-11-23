@@ -2,11 +2,14 @@ package com.ibn.algafood.api.assembler;
 
 import com.ibn.algafood.api.model.in.RestauranteInputDTO;
 import com.ibn.algafood.api.model.out.RestauranteOutDTO;
+import com.ibn.algafood.domain.model.Cidade;
 import com.ibn.algafood.domain.model.Cozinha;
 import com.ibn.algafood.domain.model.Restaurante;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
+
+import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
@@ -26,6 +29,10 @@ public class RestauranteMapper {
         // To avoid
         // identifier of an instance of com.ibn.algafood.domain.model.Cozinha was altered from 1 to 2
         restaurante.setCozinha(new Cozinha());
+
+        if (Objects.nonNull(restaurante.getEndereco()))
+            restaurante.getEndereco().setCidade(new Cidade());
+
         mapper.map(restauranteInput, restaurante);
     }
 }

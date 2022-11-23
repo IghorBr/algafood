@@ -2,6 +2,7 @@ package com.ibn.algafood.domain.service;
 
 import com.ibn.algafood.domain.exception.CozinhaNaoEncontradaException;
 import com.ibn.algafood.domain.exception.RestauranteNaoEncontradoException;
+import com.ibn.algafood.domain.model.Cidade;
 import com.ibn.algafood.domain.model.Cozinha;
 import com.ibn.algafood.domain.model.Restaurante;
 import com.ibn.algafood.domain.repository.CozinhaRepository;
@@ -18,7 +19,8 @@ import java.util.List;
 public class RestauranteService {
 
     private final RestauranteRepository restauranteRepository;
-    private final CozinhaRepository cozinhaRepository;
+    private final CozinhaService cozinhaRepository;
+    private final CidadeService cidadeService;
 
     public List<Restaurante> findAll() {
         return restauranteRepository.findAll();
@@ -44,9 +46,12 @@ public class RestauranteService {
     public Restaurante save(Restaurante restaurante) {
         Long cozinhaId = restaurante.getCozinha().getId();
 
-        Cozinha cozinha = cozinhaRepository.findById(cozinhaId).orElseThrow(() -> new CozinhaNaoEncontradaException(cozinhaId));
+        Cozinha cozinha = cozinhaRepository.findById(cozinhaId);
+        Cidade cidade = cidadeService.findById(restaurante.getEndereco().getCidade().getId());
 
         restaurante.setCozinha(cozinha);
+        restaurante.getEndereco().setCidade(cidade);
+
         return restauranteRepository.save(restaurante);
     }
 
