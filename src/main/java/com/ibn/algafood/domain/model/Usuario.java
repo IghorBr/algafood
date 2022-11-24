@@ -45,4 +45,8 @@ public class Usuario {
     public int hashCode() {
         return Objects.hash(getId());
     }
+
+    public boolean validaSenha(String senha) {
+        return Objects.nonNull(senha) && this.getSenha().equals(senha);
+    }
 }
