@@ -1,13 +1,16 @@
 package com.ibn.algafood.domain.service;
 
+import com.ibn.algafood.domain.exception.AlgafoodException;
 import com.ibn.algafood.domain.exception.CozinhaNaoEncontradaException;
 import com.ibn.algafood.domain.exception.RestauranteNaoEncontradoException;
 import com.ibn.algafood.domain.model.Cidade;
 import com.ibn.algafood.domain.model.Cozinha;
+import com.ibn.algafood.domain.model.FormaPagamento;
 import com.ibn.algafood.domain.model.Restaurante;
 import com.ibn.algafood.domain.repository.CozinhaRepository;
 import com.ibn.algafood.domain.repository.RestauranteRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +24,7 @@ public class RestauranteService {
     private final RestauranteRepository restauranteRepository;
     private final CozinhaService cozinhaRepository;
     private final CidadeService cidadeService;
+    private final FormaPagamentoService formaPagamentoService;
 
     public List<Restaurante> findAll() {
         return restauranteRepository.findAll();
@@ -73,5 +77,26 @@ public class RestauranteService {
 
         // não é necessário fazer isso, mas para deixar explicito
         restauranteRepository.save(restaurante);
+    }
+
+    @Transactional
+    public void removerFormaPagamento(Long restauranteId, Long formaPagamentoId) {
+        Restaurante restaurante = this.findById(restauranteId);
+        FormaPagamento formaPagamento = formaPagamentoService.findById(formaPagamentoId);
+
+        restaurante.removerFormaPagamento(formaPagamento);
+    }
+
+    @Transactional
+    public void adicionarFormaPagamento(Long restauranteId, Long formaPagamentoId) {
+        Restaurante restaurante = this.findById(restauranteId);
+        FormaPagamento formaPagamento = formaPagamentoService.findById(formaPagamentoId);
+
+        try {
+            restaurante.adicionarFormaPagamento(formaPagamento);
+            restauranteRepository.flush();
+        } catch (DataIntegrityViolationException e) {
+            throw new AlgafoodException(String.format("O restaurante %s já aceita a forma de pagamento %s", restaurante.getNome(), formaPagamento.getDescricao()));
+        }
     }
 }

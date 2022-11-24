@@ -15,9 +15,7 @@ import javax.validation.constraints.PositiveOrZero;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 @Getter @Setter
@@ -65,7 +63,7 @@ public class Restaurante {
             joinColumns = @JoinColumn(name = "restaurante_id"),
             inverseJoinColumns = @JoinColumn(name = "forma_pagamento_id")
     )
-    private List<FormaPagamento> formasPagamento = new ArrayList<>();
+    private Set<FormaPagamento> formasPagamento = new HashSet<>();
 
     @OneToMany(mappedBy = "restaurante")
     private List<Produto> produtos;
@@ -88,5 +86,15 @@ public class Restaurante {
     @Override
     public int hashCode() {
         return Objects.hash(getId());
+    }
+
+    public Restaurante adicionarFormaPagamento(FormaPagamento fp) {
+        this.getFormasPagamento().add(fp);
+        return this;
+    }
+
+    public Restaurante removerFormaPagamento(FormaPagamento fp) {
+        this.getFormasPagamento().remove(fp);
+        return this;
     }
 }
