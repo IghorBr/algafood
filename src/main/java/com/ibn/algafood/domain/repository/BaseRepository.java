@@ -9,4 +9,6 @@ import java.util.Optional;
 public interface BaseRepository<T, ID> extends JpaRepository<T, ID> {
 
     Optional<T> buscarPrimeiro();
+
+    public void detach(T entity);
 }

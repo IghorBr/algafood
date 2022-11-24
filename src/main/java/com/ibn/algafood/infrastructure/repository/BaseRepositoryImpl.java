@@ -25,4 +25,9 @@ public class BaseRepositoryImpl<T, ID> extends SimpleJpaRepository<T, ID> implem
 
         return Optional.ofNullable(value);
     }
+
+    @Override
+    public void detach(T entity) {
+        entityManager.detach(entity);
+    }
 }
