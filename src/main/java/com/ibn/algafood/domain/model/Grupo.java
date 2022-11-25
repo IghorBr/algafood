@@ -36,4 +36,14 @@ public class Grupo {
     public int hashCode() {
         return Objects.hash(getId());
     }
+
+    public Grupo adicionarPermissao(Permissao permissao) {
+        this.getPermissoes().add(permissao);
+        return this;
+    }
+
+    public Grupo removerPermissao(Permissao permissao) {
+        this.getPermissoes().remove(permissao);
+        return this;
+    }
 }
