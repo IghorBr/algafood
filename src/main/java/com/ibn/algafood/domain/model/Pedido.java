@@ -75,4 +75,17 @@ public class Pedido {
     public int hashCode() {
         return Objects.hash(getId());
     }
+
+    public void getValorTotal() {
+        this.subtotal = this.getItens().stream().map(i -> i.getPrecoUnitario()).reduce(BigDecimal.ZERO, BigDecimal::add);
+        this.valorTotal = subtotal.add(this.taxaFrete);
+    }
+
+    public void defineTaxaFrete() {
+        this.setTaxaFrete(this.getRestaurante().getTaxaFrete());
+    }
+
+    public void atribuirPedidos() {
+        this.getItens().forEach(i -> i.setPedido(this));
+    }
 }

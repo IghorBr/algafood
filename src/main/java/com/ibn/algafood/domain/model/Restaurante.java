@@ -128,4 +128,8 @@ public class Restaurante {
         this.getResponsaveis().remove(usuario);
         return this;
     }
+
+    public boolean verificaFormaPagamento(FormaPagamento formaPagamento) {
+        return this.getFormasPagamento().contains(formaPagamento);
+    }
 }
