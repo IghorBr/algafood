@@ -53,7 +53,7 @@ public class Pedido {
     @JoinColumn(name = "usuario_cliente_id", nullable = false)
     private Usuario cliente;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     private FormaPagamento formaPagamento;
 
@@ -61,7 +61,7 @@ public class Pedido {
     @JoinColumn(nullable = false)
     private Restaurante restaurante;
 
-    @OneToMany(mappedBy = "pedido")
+    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
     private List<ItemPedido> itens = new ArrayList<>();
 
     @Override

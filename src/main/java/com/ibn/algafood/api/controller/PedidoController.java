@@ -2,6 +2,7 @@ package com.ibn.algafood.api.controller;
 
 import com.ibn.algafood.api.mapper.PedidoMapper;
 import com.ibn.algafood.api.model.out.PedidoOutDTO;
+import com.ibn.algafood.api.model.out.PedidoResumoOutDTO;
 import com.ibn.algafood.domain.model.Pedido;
 import com.ibn.algafood.domain.service.PedidoService;
 import lombok.RequiredArgsConstructor;
@@ -22,11 +23,11 @@ public class PedidoController {
     private final PedidoMapper pedidoMapper;
 
     @GetMapping
-    public ResponseEntity<List<PedidoOutDTO>> findAll() {
+    public ResponseEntity<List<PedidoResumoOutDTO>> findAll() {
         List<Pedido> pedidos = this.pedidoService.findAll();
-        List<PedidoOutDTO> pedidoOutDTOS = pedidoMapper.domainListToDto(pedidos);
+        List<PedidoResumoOutDTO> dtos = pedidoMapper.domainListToResumo(pedidos);
 
-        return ResponseEntity.ok(pedidoOutDTOS);
+        return ResponseEntity.ok(dtos);
     }
 
     @GetMapping("/{id}")
