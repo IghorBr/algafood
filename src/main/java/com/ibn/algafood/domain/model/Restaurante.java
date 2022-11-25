@@ -97,4 +97,10 @@ public class Restaurante {
         this.getFormasPagamento().remove(fp);
         return this;
     }
+
+    public Restaurante adicionarProduto(Produto p) {
+        this.getProdutos().add(p);
+        return this;
+    }
+
 }
