@@ -3,10 +3,7 @@ package com.ibn.algafood.domain.service;
 import com.ibn.algafood.domain.exception.AlgafoodException;
 import com.ibn.algafood.domain.exception.CozinhaNaoEncontradaException;
 import com.ibn.algafood.domain.exception.RestauranteNaoEncontradoException;
-import com.ibn.algafood.domain.model.Cidade;
-import com.ibn.algafood.domain.model.Cozinha;
-import com.ibn.algafood.domain.model.FormaPagamento;
-import com.ibn.algafood.domain.model.Restaurante;
+import com.ibn.algafood.domain.model.*;
 import com.ibn.algafood.domain.repository.CozinhaRepository;
 import com.ibn.algafood.domain.repository.RestauranteRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +22,7 @@ public class RestauranteService {
     private final CozinhaService cozinhaRepository;
     private final CidadeService cidadeService;
     private final FormaPagamentoService formaPagamentoService;
+    private final UsuarioService usuarioService;
 
     public List<Restaurante> findAll() {
         return restauranteRepository.findAll();
@@ -112,6 +110,22 @@ public class RestauranteService {
         Restaurante restaurante = this.findById(id);
 
         restaurante.fechar();
+    }
+
+    @Transactional
+    public void adicionarResponsavel(Long restauranteId, Long usuarioId) {
+        Restaurante restaurante = this.findById(restauranteId);
+        Usuario usuario = usuarioService.findById(usuarioId);
+
+        restaurante.adicionarResponsavel(usuario);
+    }
+
+    @Transactional
+    public void removerResponsavel(Long restauranteId, Long usuarioId) {
+        Restaurante restaurante = this.findById(restauranteId);
+        Usuario usuario = usuarioService.findById(usuarioId);
+
+        restaurante.removerResponsavel(usuario);
     }
 
 }
