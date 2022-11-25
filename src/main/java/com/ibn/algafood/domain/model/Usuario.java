@@ -49,4 +49,14 @@ public class Usuario {
     public boolean validaSenha(String senha) {
         return Objects.nonNull(senha) && this.getSenha().equals(senha);
     }
+
+    public Usuario adicionarGrupo(Grupo grupo) {
+        this.getGrupos().add(grupo);
+        return this;
+    }
+
+    public Usuario removerGrupo(Grupo grupo) {
+        this.getGrupos().remove(grupo);
+        return this;
+    }
 }

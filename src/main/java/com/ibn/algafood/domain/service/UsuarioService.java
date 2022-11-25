@@ -2,6 +2,7 @@ package com.ibn.algafood.domain.service;
 
 import com.ibn.algafood.domain.exception.AlgafoodException;
 import com.ibn.algafood.domain.exception.UsuarioNaoEncontradoException;
+import com.ibn.algafood.domain.model.Grupo;
 import com.ibn.algafood.domain.model.Usuario;
 import com.ibn.algafood.domain.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import java.util.Optional;
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
+    private final GrupoService grupoService;
 
     public List<Usuario> findAll() {
         return usuarioRepository.findAll();
@@ -46,5 +48,21 @@ public class UsuarioService {
             throw new AlgafoodException("Senha atual informada não coincide com a senha do usuário");
 
         usuario.setSenha(novaSenha);
+    }
+
+    @Transactional
+    public void adicionarGrupo(Long usuarioId, Long grupoId) {
+        Usuario usuario = this.findById(usuarioId);
+        Grupo grupo = this.grupoService.findBydId(grupoId);
+
+        usuario.adicionarGrupo(grupo);
+    }
+
+    @Transactional
+    public void removerGrupo(Long usuarioId, Long grupoId) {
+        Usuario usuario = this.findById(usuarioId);
+        Grupo grupo = this.grupoService.findBydId(grupoId);
+
+        usuario.removerGrupo(grupo);
     }
 }
