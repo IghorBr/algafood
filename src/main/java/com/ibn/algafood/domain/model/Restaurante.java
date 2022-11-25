@@ -57,6 +57,7 @@ public class Restaurante {
     private OffsetDateTime dataAtualizacao;
 
     private Boolean ativo = Boolean.TRUE;
+    private Boolean aberto = Boolean.FALSE;
 
     @ManyToMany
     @JoinTable(name = "RESTAURANTE_FORMA_PAGAMENTO",
@@ -74,6 +75,14 @@ public class Restaurante {
 
     public void inativar() {
         this.setAtivo(false);
+    }
+
+    public void abrir() {
+        this.setAberto(true);
+    }
+
+    public void fechar() {
+        this.setAberto(false);
     }
 
     @Override

@@ -99,4 +99,19 @@ public class RestauranteService {
             throw new AlgafoodException(String.format("O restaurante %s já aceita a forma de pagamento %s", restaurante.getNome(), formaPagamento.getDescricao()));
         }
     }
+
+    @Transactional
+    public void abrir(Long id) {
+        Restaurante restaurante = this.findById(id);
+
+        restaurante.abrir();
+    }
+
+    @Transactional
+    public void fechar(Long id) {
+        Restaurante restaurante = this.findById(id);
+
+        restaurante.fechar();
+    }
+
 }
