@@ -76,7 +76,7 @@ public class Pedido {
         return Objects.hash(getId());
     }
 
-    public void getValorTotal() {
+    public void calculaValorTotal() {
         this.subtotal = this.getItens().stream().map(i -> i.getPrecoUnitario()).reduce(BigDecimal.ZERO, BigDecimal::add);
         this.valorTotal = subtotal.add(this.taxaFrete);
     }

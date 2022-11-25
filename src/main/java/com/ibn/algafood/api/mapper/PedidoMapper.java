@@ -1,5 +1,6 @@
 package com.ibn.algafood.api.mapper;
 
+import com.ibn.algafood.api.model.in.PedidoInputDTO;
 import com.ibn.algafood.api.model.out.PedidoOutDTO;
 import com.ibn.algafood.api.model.out.PedidoResumoOutDTO;
 import com.ibn.algafood.domain.model.Pedido;
@@ -29,5 +30,13 @@ public class PedidoMapper {
 
     public List<PedidoResumoOutDTO> domainListToResumo(List<Pedido> pedidos) {
         return pedidos.stream().map(pedido -> this.domainToResumo(pedido)).toList();
+    }
+
+    public Pedido inputDtoToDomain(PedidoInputDTO inputDTO) {
+        return mapper.map(inputDTO, Pedido.class);
+    }
+
+    public void copyToDomainObject(PedidoInputDTO inputDTO, Pedido pedido) {
+        mapper.map(inputDTO, pedido);
     }
 }

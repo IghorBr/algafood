@@ -18,7 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.util.ReflectionUtils;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
@@ -98,7 +97,7 @@ public class RestauranteController {
     }
 
     @PostMapping
-    public ResponseEntity<RestauranteOutDTO> save(@RequestBody @Validated(Groups.CadastroRestaurante.class) RestauranteInputDTO restauranteInput) {
+    public ResponseEntity<RestauranteOutDTO> save(@RequestBody @Valid RestauranteInputDTO restauranteInput) {
         try {
             Restaurante restaurante = restauranteAssembler.inputDtoToDomain(restauranteInput);
 
@@ -113,7 +112,7 @@ public class RestauranteController {
 
     @PutMapping("/{restauranteId}")
     public ResponseEntity<RestauranteOutDTO> update(@PathVariable Long restauranteId,
-                                                    @RequestBody @Validated(Groups.CadastroRestaurante.class) RestauranteInputDTO restauranteInputDTO) {
+                                                    @RequestBody @Valid RestauranteInputDTO restauranteInputDTO) {
         Restaurante restauranteAtual = restauranteService.findById(restauranteId);
 
         restauranteAssembler.copyToDomainObject(restauranteInputDTO, restauranteAtual);
