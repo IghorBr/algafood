@@ -155,6 +155,17 @@ public class RestauranteController {
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping("/ativacoes")
+    public ResponseEntity<Void> ativarMultiplos(@RequestBody List<Long> ids) {
+        restauranteService.ativar(ids);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/ativacoes")
+    public ResponseEntity<Void> aintivarMultiplos(@RequestBody List<Long> ids) {
+        restauranteService.ativar(ids);
+        return ResponseEntity.noContent().build();
+    }
     @PutMapping("/{id}/abertura")
     public ResponseEntity<Void> abrir(@PathVariable("id") Long id) {
         restauranteService.abrir(id);

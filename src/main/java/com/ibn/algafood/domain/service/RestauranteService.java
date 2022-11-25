@@ -78,6 +78,24 @@ public class RestauranteService {
     }
 
     @Transactional
+    public void ativar(List<Long> restauranteIds) {
+        try {
+            restauranteIds.forEach(this::ativar);
+        } catch (RestauranteNaoEncontradoException e) {
+            throw new AlgafoodException(e.getMessage());
+        }
+    }
+
+    @Transactional
+    public void inativar(List<Long> restauranteIds) {
+        try {
+            restauranteIds.forEach(this::inativar);
+        } catch (RestauranteNaoEncontradoException e) {
+            throw new AlgafoodException(e.getMessage());
+        }
+    }
+
+    @Transactional
     public void removerFormaPagamento(Long restauranteId, Long formaPagamentoId) {
         Restaurante restaurante = this.findById(restauranteId);
         FormaPagamento formaPagamento = formaPagamentoService.findById(formaPagamentoId);
