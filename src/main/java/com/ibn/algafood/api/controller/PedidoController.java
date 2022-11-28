@@ -31,8 +31,8 @@ public class PedidoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PedidoOutDTO> findById(@PathVariable("id") Long id) {
-        Pedido pedido = this.pedidoService.findById(id);
+    public ResponseEntity<PedidoOutDTO> findById(@PathVariable("id") String id) {
+        Pedido pedido = this.pedidoService.findByCodigo(id);
 
         return ResponseEntity.ok(pedidoMapper.domaintToDto(pedido));
     }

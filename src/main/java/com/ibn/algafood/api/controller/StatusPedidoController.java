@@ -16,19 +16,19 @@ public class StatusPedidoController {
     private final PedidoService pedidoService;
 
     @PutMapping("/confirmacao")
-    public ResponseEntity<Void> confirmar(@PathVariable("pedidoId") Long pedidoId) {
+    public ResponseEntity<Void> confirmar(@PathVariable("pedidoId") String pedidoId) {
         pedidoService.confimar(pedidoId);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/entrega")
-    public ResponseEntity<Void> entregar(@PathVariable("pedidoId") Long pedidoId) {
+    public ResponseEntity<Void> entregar(@PathVariable("pedidoId") String pedidoId) {
         pedidoService.entregar(pedidoId);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/cancelamento")
-    public ResponseEntity<Void> cancelar(@PathVariable("pedidoId") Long pedidoId) {
+    public ResponseEntity<Void> cancelar(@PathVariable("pedidoId") String pedidoId) {
         pedidoService.cancelar(pedidoId);
         return ResponseEntity.noContent().build();
     }

@@ -22,6 +22,8 @@ public class Pedido {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String codigo;
+
     @Column(name = "subtotal", nullable = false)
     private BigDecimal subtotal;
 
@@ -91,7 +93,7 @@ public class Pedido {
     }
 
     public void criar() {
-        setStatus(StatusPedido.CRIADO);
+        this.status = StatusPedido.CRIADO;
     }
 
     public void confirmar() {
@@ -111,7 +113,7 @@ public class Pedido {
 
     private void setStatus(StatusPedido status) {
         if (!getStatus().podeAlterarStatus(status))
-            throw new AlgafoodException(String.format("Status do pedido %d não pode ser alterado de %s para %s", this.getId(), this.getStatus().getDescricao(), status.getDescricao()));
+            throw new AlgafoodException(String.format("Status do pedido %s não pode ser alterado de %s para %s", this.getCodigo(), this.getStatus().getDescricao(), status.getDescricao()));
 
         this.status = status;
     }

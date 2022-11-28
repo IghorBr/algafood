@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -30,9 +31,14 @@ public class PedidoService {
         return this.pedidoRepository.findById(id).orElseThrow(() -> new PedidoNaoEncontradoException(id));
     }
 
+    public Pedido findByCodigo(String codigo) {
+        return this.pedidoRepository.findByCodigo(codigo).orElseThrow(() -> new PedidoNaoEncontradoException(String.format("Não exite pedido com código %s.", codigo)));
+    }
+
     @Transactional
     public Pedido save(Pedido pedido) {
         // SETA O STATUS DO PEDIDO
+        pedido.setCodigo(UUID.randomUUID().toString());
         pedido.criar();
 
         Long restauranteId = pedido.getRestaurante().getId();
@@ -70,20 +76,20 @@ public class PedidoService {
     }
 
     @Transactional
-    public void confimar(Long pedidoId) {
-        Pedido pedido = this.findById(pedidoId);
+    public void confimar(String pedidoId) {
+        Pedido pedido = this.findByCodigo(pedidoId);
         pedido.confirmar();
     }
 
     @Transactional
-    public void entregar(Long pedidoId) {
-        Pedido pedido = this.findById(pedidoId);
+    public void entregar(String pedidoId) {
+        Pedido pedido = this.findByCodigo(pedidoId);
         pedido.entregar();
     }
 
     @Transactional
-    public void cancelar(Long pedidoId) {
-        Pedido pedido = this.findById(pedidoId);
+    public void cancelar(String pedidoId) {
+        Pedido pedido = this.findByCodigo(pedidoId);
         pedido.cancelar();
     }
 }
