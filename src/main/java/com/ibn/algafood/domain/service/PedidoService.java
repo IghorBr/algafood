@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Service
@@ -66,5 +67,38 @@ public class PedidoService {
         pedido.setCliente(usuario);
 
         return this.pedidoRepository.save(pedido);
+    }
+
+    @Transactional
+    public void confimar(Long pedidoId) {
+        Pedido pedido = this.findById(pedidoId);
+
+        if (pedido.getStatus() != StatusPedido.CRIADO)
+            throw new AlgafoodException(String.format("Status do pedido %d não pode ser alterado de %s para %s", pedido.getId(), pedido.getStatus().getDescricao(), StatusPedido.CONFIRMADO.getDescricao()));
+
+        pedido.setStatus(StatusPedido.CONFIRMADO);
+        pedido.setDataConfirmacao(OffsetDateTime.now());
+    }
+
+    @Transactional
+    public void entregar(Long pedidoId) {
+        Pedido pedido = this.findById(pedidoId);
+
+        if (pedido.getStatus() != StatusPedido.CONFIRMADO)
+            throw new AlgafoodException(String.format("Status do pedido %d não pode ser alterado de %s para %s", pedido.getId(), pedido.getStatus().getDescricao(), StatusPedido.ENTREGUE.getDescricao()));
+
+        pedido.setStatus(StatusPedido.ENTREGUE);
+        pedido.setDataEntrega(OffsetDateTime.now());
+    }
+
+    @Transactional
+    public void cancelar(Long pedidoId) {
+        Pedido pedido = this.findById(pedidoId);
+
+        if (pedido.getStatus() != StatusPedido.CONFIRMADO)
+            throw new AlgafoodException(String.format("Status do pedido %d não pode ser alterado de %s para %s", pedido.getId(), pedido.getStatus().getDescricao(), StatusPedido.CANCELADO.getDescricao()));
+
+        pedido.setStatus(StatusPedido.CANCELADO);
+        pedido.setDataCancelamento(OffsetDateTime.now());
     }
 }
