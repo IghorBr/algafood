@@ -1,5 +1,6 @@
 package com.ibn.algafood.domain.model;
 
+import com.ibn.algafood.domain.exception.AlgafoodException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -87,5 +88,31 @@ public class Pedido {
 
     public void atribuirPedidos() {
         this.getItens().forEach(i -> i.setPedido(this));
+    }
+
+    public void criar() {
+        setStatus(StatusPedido.CRIADO);
+    }
+
+    public void confirmar() {
+        setStatus(StatusPedido.CONFIRMADO);
+        setDataConfirmacao(OffsetDateTime.now());
+    }
+
+    public void entregar() {
+        setStatus(StatusPedido.ENTREGUE);
+        setDataEntrega(OffsetDateTime.now());
+    }
+
+    public void cancelar() {
+        setStatus(StatusPedido.CANCELADO);
+        setDataCancelamento(OffsetDateTime.now());
+    }
+
+    private void setStatus(StatusPedido status) {
+        if (!getStatus().podeAlterarStatus(status))
+            throw new AlgafoodException(String.format("Status do pedido %d não pode ser alterado de %s para %s", this.getId(), this.getStatus().getDescricao(), status.getDescricao()));
+
+        this.status = status;
     }
 }
