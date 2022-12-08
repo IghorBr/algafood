@@ -1,10 +1,12 @@
 package com.ibn.algafood.api.controller;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibn.algafood.api.mapper.RestauranteMapper;
 import com.ibn.algafood.api.model.in.RestauranteInputDTO;
 import com.ibn.algafood.api.model.out.RestauranteOutDTO;
+import com.ibn.algafood.api.model.view.RestauranteView;
 import com.ibn.algafood.core.validation.Groups;
 import com.ibn.algafood.domain.exception.AlgafoodException;
 import com.ibn.algafood.domain.exception.EntidadeNaoEncontradaException;
@@ -16,6 +18,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.*;
@@ -47,13 +50,16 @@ public class RestauranteController {
     }
 
     @GetMapping
-    public ResponseEntity<List<RestauranteOutDTO>> findAll() {
+    public ResponseEntity<MappingJacksonValue> findAll() {
         List<Restaurante> restaurantes = restauranteService.findAll();
 
         restaurantes.forEach(r -> log.info("A cozinha do restaurante " + r.getNome() + " é " + r.getCozinha().getNome()));
         List<RestauranteOutDTO> dtos = restaurantes.stream().map(r -> restauranteAssembler.domainToOutDto(r)).sorted((a, b) -> a.getId().compareTo(b.getId())).toList();
 
-        return ResponseEntity.ok(dtos);
+        MappingJacksonValue wrapper = new MappingJacksonValue(dtos);
+        wrapper.setSerializationView(RestauranteView.Resumo.class);
+
+        return ResponseEntity.ok(wrapper);
     }
 
     @GetMapping("/{restauranteId}")
