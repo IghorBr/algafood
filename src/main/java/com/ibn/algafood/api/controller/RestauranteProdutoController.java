@@ -22,8 +22,14 @@ public class RestauranteProdutoController {
     private final ProdutoMapper produtoMapper;
 
     @GetMapping
-    public ResponseEntity<List<ProdutoOutDTO>> findAll(@PathVariable("restauranteId") Long id) {
-        List<Produto> produtos = produtoService.findAll(id);
+    public ResponseEntity<List<ProdutoOutDTO>> findAll(@PathVariable("restauranteId") Long id,
+                                                       @RequestParam(required = false) boolean findInativos) {
+        List<Produto> produtos;
+
+        if (findInativos)
+            produtos = produtoService.findAll(id);
+        else
+            produtos = produtoService.findAtivos(id);
 
         return ResponseEntity.ok(produtoMapper.domainListToDto(produtos));
     }

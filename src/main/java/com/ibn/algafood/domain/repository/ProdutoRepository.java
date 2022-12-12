@@ -11,5 +11,7 @@ import java.util.Optional;
 public interface ProdutoRepository extends JpaRepository<Produto, Long> {
 
     List<Produto> findByRestaurante(Restaurante r);
+    @Query(value = "FROM Produto p WHERE p.ativo = TRUE AND p.restaurante = ?1")
+    List<Produto> findProdutosAtivos(Restaurante r);
     Optional<Produto> findByIdAndRestaurante(Long id, Restaurante restaurante);
 }

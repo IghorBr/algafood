@@ -7,7 +7,9 @@ import com.ibn.algafood.api.model.in.PedidoInputDTO;
 import com.ibn.algafood.api.model.out.PedidoOutDTO;
 import com.ibn.algafood.api.model.out.PedidoResumoOutDTO;
 import com.ibn.algafood.domain.model.Pedido;
+import com.ibn.algafood.domain.repository.filter.PedidoFilter;
 import com.ibn.algafood.domain.service.PedidoService;
+import com.ibn.algafood.infrastructure.repository.spec.PedidoSpecBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,8 +47,8 @@ public class PedidoController {
 //    }
 
     @GetMapping
-    public ResponseEntity<List<PedidoResumoOutDTO>> findAll() {
-        List<Pedido> pedidos = this.pedidoService.findAll();
+    public ResponseEntity<List<PedidoResumoOutDTO>> findAll(PedidoFilter filter) {
+        List<Pedido> pedidos = this.pedidoService.findAll(PedidoSpecBuilder.usandoFiltro(filter));
         List<PedidoResumoOutDTO> dtos = pedidoMapper.domainListToResumo(pedidos);
 
         return ResponseEntity.ok(dtos);
