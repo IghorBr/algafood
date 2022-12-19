@@ -11,6 +11,9 @@ import com.ibn.algafood.domain.repository.filter.PedidoFilter;
 import com.ibn.algafood.domain.service.PedidoService;
 import com.ibn.algafood.infrastructure.repository.spec.PedidoSpecBuilder;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
@@ -47,11 +50,13 @@ public class PedidoController {
 //    }
 
     @GetMapping
-    public ResponseEntity<List<PedidoResumoOutDTO>> findAll(PedidoFilter filter) {
-        List<Pedido> pedidos = this.pedidoService.findAll(PedidoSpecBuilder.usandoFiltro(filter));
-        List<PedidoResumoOutDTO> dtos = pedidoMapper.domainListToResumo(pedidos);
+    public ResponseEntity<Page<PedidoResumoOutDTO>> findAll(PedidoFilter filter, Pageable pageable) {
+        Page<Pedido> pedidos = this.pedidoService.findAll(PedidoSpecBuilder.usandoFiltro(filter), pageable);
+        List<PedidoResumoOutDTO> dtos = pedidoMapper.domainListToResumo(pedidos.getContent());
 
-        return ResponseEntity.ok(dtos);
+        PageImpl<PedidoResumoOutDTO> page = new PageImpl<>(dtos, pageable, pedidos.getTotalElements());
+
+        return ResponseEntity.ok(page);
     }
 
     @GetMapping("/{id}")

@@ -7,6 +7,9 @@ import com.ibn.algafood.core.validation.Groups;
 import com.ibn.algafood.domain.model.Cozinha;
 import com.ibn.algafood.domain.service.CozinhaService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -20,28 +23,31 @@ import java.util.List;
 public class CozinhaController {
 
     private final CozinhaService cozinhaService;
-    private final CozinhaMapper cozinhaAssembler;
+    private final CozinhaMapper cozinhaMapper;
 
     @GetMapping
-    public ResponseEntity<List<CozinhaOutDTO>> findAll() {
-        List<Cozinha> cozinhas = cozinhaService.findAll();
+    public ResponseEntity<Page<CozinhaOutDTO>> findAll(Pageable pageable) {
+        Page<Cozinha> cozinhas = cozinhaService.findAll(pageable);
+        List<CozinhaOutDTO> dtos = cozinhaMapper.domainListToDto(cozinhas.getContent());
 
-        return ResponseEntity.ok(cozinhaAssembler.domainListToDto(cozinhas));
+        PageImpl<CozinhaOutDTO> cozinhaPage = new PageImpl<>(dtos, pageable, cozinhas.getTotalElements());
+
+        return ResponseEntity.ok(cozinhaPage);
     }
 
     @GetMapping("/{cozinhaId}")
     public ResponseEntity<CozinhaOutDTO> findById(@PathVariable Long cozinhaId) {
         Cozinha cozinha = cozinhaService.findById(cozinhaId);
 
-        return ResponseEntity.ok(cozinhaAssembler.domainToDto(cozinha));
+        return ResponseEntity.ok(cozinhaMapper.domainToDto(cozinha));
     }
 
     @PostMapping
     public ResponseEntity<CozinhaOutDTO> save(@RequestBody @Validated(Groups.CadastroCozinha.class) CozinhaInputDTO cozinhaInputDTO) {
-        Cozinha cozinha = cozinhaAssembler.inputDtoToDomain(cozinhaInputDTO);
+        Cozinha cozinha = cozinhaMapper.inputDtoToDomain(cozinhaInputDTO);
 
         cozinha = cozinhaService.save(cozinha);
-        return ResponseEntity.status(HttpStatus.CREATED).body(cozinhaAssembler.domainToDto(cozinha));
+        return ResponseEntity.status(HttpStatus.CREATED).body(cozinhaMapper.domainToDto(cozinha));
     }
 
     @PutMapping("/{cozinhaId}")
@@ -49,11 +55,11 @@ public class CozinhaController {
                                              @RequestBody @Validated(Groups.CadastroCozinha.class) CozinhaInputDTO cozinhaInputDTO) {
         Cozinha cozinhaAtual = cozinhaService.findById(cozinhaId);
 
-        cozinhaAssembler.copyToDomainObject(cozinhaInputDTO, cozinhaAtual);
+        cozinhaMapper.copyToDomainObject(cozinhaInputDTO, cozinhaAtual);
 
 //        BeanUtils.copyProperties(cozinha, cozinhaAtual, "id");
         Cozinha cozinhaSalva = cozinhaService.save(cozinhaAtual);
-        return ResponseEntity.ok(cozinhaAssembler.domainToDto(cozinhaSalva));
+        return ResponseEntity.ok(cozinhaMapper.domainToDto(cozinhaSalva));
     }
 
     @DeleteMapping("/{cozinhaId}")

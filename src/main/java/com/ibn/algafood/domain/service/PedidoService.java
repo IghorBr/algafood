@@ -5,6 +5,8 @@ import com.ibn.algafood.domain.exception.PedidoNaoEncontradoException;
 import com.ibn.algafood.domain.model.*;
 import com.ibn.algafood.domain.repository.PedidoRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +32,10 @@ public class PedidoService {
 
     public List<Pedido> findAll(Specification<Pedido> specification) {
         return this.pedidoRepository.findAll(specification);
+    }
+
+    public Page<Pedido> findAll(Specification<Pedido> specification, Pageable pageable) {
+        return this.pedidoRepository.findAll(specification, pageable);
     }
 
     public Pedido findById(Long id) {
