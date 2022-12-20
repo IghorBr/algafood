@@ -25,11 +25,11 @@ public class VendaQueryServiceImpl implements VendaQueryService {
     private final EntityManager entityManager;
 
     @Override
-    public List<VendaDiaria> consultarVendasDiarias(VendaDiariaFilter filter) {
+    public List<VendaDiaria> consultarVendasDiarias(VendaDiariaFilter filter, String timeOffset) {
         StringBuilder string = new StringBuilder();
         var parametros = new HashMap<String, Object>();
 
-        string.append("SELECT date(p.data_criacao), count(p.id), sum(p.valor_total) FROM pedido p WHERE 1=1 AND p.status in ('ENTREGUE', 'CONFIRMADO') ");
+        string.append("SELECT date(convert_tz(p.data_criacao, '+00:00', '" + timeOffset +"')), count(p.id), sum(p.valor_total) FROM pedido p WHERE 1=1 AND p.status in ('ENTREGUE', 'CONFIRMADO') ");
 
         if (nonNull(filter.getRestauranteId())) {
             string.append(" AND p.restaurante_id = :restauranteId");
@@ -46,7 +46,7 @@ public class VendaQueryServiceImpl implements VendaQueryService {
             parametros.put("dataFim", filter.getDataCriacaoFim());
         }
 
-        string.append(" GROUP BY date(p.data_criacao)");
+        string.append(" GROUP BY date(convert_tz(p.data_criacao, '+00:00', '-03:00'))");
 
         Query nativeQuery = entityManager.createNativeQuery(string.toString());
 
