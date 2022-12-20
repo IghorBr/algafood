@@ -1,12 +1,11 @@
 package com.ibn.algafood.infrastructure.repository.spec;
 
 import com.ibn.algafood.domain.model.Pedido;
-import com.ibn.algafood.domain.repository.filter.PedidoFilter;
+import com.ibn.algafood.domain.filter.PedidoFilter;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
-import java.util.Objects;
 
 import static java.util.Objects.nonNull;
 

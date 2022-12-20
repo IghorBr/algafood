@@ -1,13 +1,13 @@
 package com.ibn.algafood.api.controller;
 
-import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
-import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import com.google.common.collect.ImmutableMap;
 import com.ibn.algafood.api.mapper.PedidoMapper;
 import com.ibn.algafood.api.model.in.PedidoInputDTO;
 import com.ibn.algafood.api.model.out.PedidoOutDTO;
 import com.ibn.algafood.api.model.out.PedidoResumoOutDTO;
+import com.ibn.algafood.core.page.PageableTranslator;
 import com.ibn.algafood.domain.model.Pedido;
-import com.ibn.algafood.domain.repository.filter.PedidoFilter;
+import com.ibn.algafood.domain.filter.PedidoFilter;
 import com.ibn.algafood.domain.service.PedidoService;
 import com.ibn.algafood.infrastructure.repository.spec.PedidoSpecBuilder;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +16,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.json.MappingJacksonValue;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -51,6 +49,8 @@ public class PedidoController {
 
     @GetMapping
     public ResponseEntity<Page<PedidoResumoOutDTO>> findAll(PedidoFilter filter, Pageable pageable) {
+        pageable = traduzirPageable(pageable);
+
         Page<Pedido> pedidos = this.pedidoService.findAll(PedidoSpecBuilder.usandoFiltro(filter), pageable);
         List<PedidoResumoOutDTO> dtos = pedidoMapper.domainListToResumo(pedidos.getContent());
 
@@ -74,5 +74,15 @@ public class PedidoController {
         pedido = pedidoService.save(pedido);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(pedidoMapper.domaintToDto(pedido));
+    }
+
+    private Pageable traduzirPageable(Pageable pageable) {
+        var mapeamento = ImmutableMap.of(
+                "codigo", "codigo",
+                "restaurante.nome", "resturante.nome",
+                "nomeCliente", "cliente.nome"
+        );
+
+        return PageableTranslator.translate(pageable, mapeamento);
     }
 }

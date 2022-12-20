@@ -1,4 +1,4 @@
-package com.ibn.algafood.domain.repository.filter;
+package com.ibn.algafood.domain.filter;
 
 import lombok.Getter;
 import lombok.Setter;
