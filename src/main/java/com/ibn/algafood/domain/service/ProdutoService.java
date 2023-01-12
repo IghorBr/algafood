@@ -87,4 +87,15 @@ public class ProdutoService {
 
         return foto;
     }
+
+    @Transactional
+    public void excluirFoto(Long restauranteId, Long produtoId) {
+        FotoProduto foto = getFoto(restauranteId, produtoId);
+
+        produtoRepository.delete(foto);
+        produtoRepository.flush();
+
+        storageService.remover(foto.getNomeArquivo());
+    }
+
 }
