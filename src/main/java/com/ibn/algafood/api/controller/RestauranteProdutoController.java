@@ -1,9 +1,12 @@
 package com.ibn.algafood.api.controller;
 
+import com.ibn.algafood.api.mapper.FotoProdutoMapper;
 import com.ibn.algafood.api.mapper.ProdutoMapper;
 import com.ibn.algafood.api.model.in.FotoProdutoInputDTO;
 import com.ibn.algafood.api.model.in.ProdutoInputDTO;
+import com.ibn.algafood.api.model.out.FotoProdutoOutDTO;
 import com.ibn.algafood.api.model.out.ProdutoOutDTO;
+import com.ibn.algafood.domain.model.FotoProduto;
 import com.ibn.algafood.domain.model.Produto;
 import com.ibn.algafood.domain.service.ProdutoService;
 import lombok.RequiredArgsConstructor;
@@ -11,13 +14,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/restaurantes/{restauranteId}/produtos")
@@ -26,6 +26,7 @@ public class RestauranteProdutoController {
 
     private final ProdutoService produtoService;
     private final ProdutoMapper produtoMapper;
+    private final FotoProdutoMapper fotoProdutoMapper;
 
     @GetMapping
     public ResponseEntity<List<ProdutoOutDTO>> findAll(@PathVariable("restauranteId") Long id,
@@ -70,19 +71,33 @@ public class RestauranteProdutoController {
         return ResponseEntity.ok().body(produtoMapper.domainToDto(produto));
     }
 
+    @GetMapping("/{produtoId}/foto")
+    public ResponseEntity<FotoProdutoOutDTO> getFoto(@PathVariable("restauranteId") Long restauranteId,
+                                                     @PathVariable("produtoId") Long produtoId) {
+        FotoProduto foto = produtoService.getFoto(restauranteId, produtoId);
+        FotoProdutoOutDTO dto = fotoProdutoMapper.domainToDto(foto);
+
+        return ResponseEntity.ok(dto);
+    }
+
     @PutMapping(value = "/{produtoId}/foto", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Void> updatePicture(
+    public ResponseEntity<FotoProdutoOutDTO> updatePicture(
             @PathVariable("restauranteId") Long restauranteId,
             @PathVariable("produtoId") Long produtoId,
-            @Valid FotoProdutoInputDTO dto
-            ) throws IOException {
-        var nomeArquivo = UUID.randomUUID().toString() + "_" +
-                dto.getArquivo().getOriginalFilename();
+            @Valid FotoProdutoInputDTO dto) throws IOException {
 
-        var pathFoto = Path.of("C:\\Users\\ighor\\Desktop\\Projetos\\ESR\\fotos", nomeArquivo);
-        dto.getArquivo().transferTo(pathFoto);
+        Produto produto = produtoService.findById(produtoId, restauranteId);
+        FotoProduto foto = new FotoProduto();
+        foto.setProduto(produto);
+        foto.setDescricao(dto.getDescricao());
+        foto.setContentType(dto.getArquivo().getContentType());
+        foto.setTamanho(dto.getArquivo().getSize());
+        foto.setNomeArquivo(dto.getArquivo().getOriginalFilename());
 
+        foto = produtoService.salvarFoto(foto, dto.getArquivo().getInputStream());
 
-        return ResponseEntity.ok().build();
+        FotoProdutoOutDTO fotoProdutoDTO = fotoProdutoMapper.domainToDto(foto);
+
+        return ResponseEntity.ok(fotoProdutoDTO);
     }
 }
