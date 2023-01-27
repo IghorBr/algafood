@@ -10,6 +10,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Service
@@ -24,6 +25,14 @@ public class FormaPagamentoService {
 
     public FormaPagamento findById(Long id) {
         return formaPagamentoRepository.findById(id).orElseThrow(() -> new FormaPagamentoNaoEncontradaException(id));
+    }
+
+    public OffsetDateTime getDataUltimaAtualizacao() {
+        return formaPagamentoRepository.getDataUltimaAtualizacao();
+    }
+
+    public OffsetDateTime getDataUltimaAtualizacao(Long id) {
+        return formaPagamentoRepository.getDataUltimaAtualizacao(id);
     }
 
     @Transactional

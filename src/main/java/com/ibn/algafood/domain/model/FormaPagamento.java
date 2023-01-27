@@ -3,9 +3,11 @@ package com.ibn.algafood.domain.model;
 import com.ibn.algafood.core.validation.Groups;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.time.OffsetDateTime;
 import java.util.Objects;
 
 @Entity
@@ -20,6 +22,9 @@ public class FormaPagamento {
     @Column(nullable = false)
     @NotBlank(groups = Groups.CadastroFormaPagamento.class)
     private String descricao;
+
+    @UpdateTimestamp
+    private OffsetDateTime dataAtualizacao;
 
     @Override
     public boolean equals(Object o) {

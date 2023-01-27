@@ -12,8 +12,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.ServletWebRequest;
+import org.springframework.web.filter.ShallowEtagHeaderFilter;
 
+import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 @RestController
@@ -25,16 +29,46 @@ public class FormaPagamentoController {
     private final FormaPagamentoMapper formaPagamentoMapper;
 
     @GetMapping
-    public ResponseEntity<List<FormaPagamentoOutDTO>> findAll() {
+    public ResponseEntity<List<FormaPagamentoOutDTO>> findAll(ServletWebRequest request) {
+        ShallowEtagHeaderFilter.disableContentCaching(request.getRequest());
+
+        String eTag = "0";
+
+        OffsetDateTime dataUltimaAtualizacao = formaPagamentoService.getDataUltimaAtualizacao();
+
+        if (Objects.nonNull(dataUltimaAtualizacao)) {
+            eTag = String.valueOf(dataUltimaAtualizacao.toEpochSecond());
+        }
+
+        if (request.checkNotModified(eTag)) {
+            return null;
+        }
+
         return ResponseEntity.ok()
                 .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS))
+                .eTag(eTag)
                 .body(formaPagamentoMapper.domainListToDto(formaPagamentoService.findAll()));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<FormaPagamentoOutDTO> findById(@PathVariable("id") Long id) {
+    public ResponseEntity<FormaPagamentoOutDTO> findById(@PathVariable("id") Long id, ServletWebRequest request) {
+        ShallowEtagHeaderFilter.disableContentCaching(request.getRequest());
+
+        String eTag = "0";
+
+        OffsetDateTime dataUltimaAtualizacao = formaPagamentoService.getDataUltimaAtualizacao(id);
+
+        if (Objects.nonNull(dataUltimaAtualizacao)) {
+            eTag = String.valueOf(dataUltimaAtualizacao.toEpochSecond());
+        }
+
+        if (request.checkNotModified(eTag)) {
+            return null;
+        }
+
         return ResponseEntity.ok()
                 .cacheControl(CacheControl.maxAge(20, TimeUnit.SECONDS))
+                .eTag(eTag)
                 .body(formaPagamentoMapper.domainToDto(formaPagamentoService.findById(id)));
     }
 
