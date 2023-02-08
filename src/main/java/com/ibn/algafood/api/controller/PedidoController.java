@@ -6,6 +6,7 @@ import com.ibn.algafood.api.model.in.PedidoInputDTO;
 import com.ibn.algafood.api.model.out.PedidoOutDTO;
 import com.ibn.algafood.api.model.out.PedidoResumoOutDTO;
 import com.ibn.algafood.core.page.PageableTranslator;
+import com.ibn.algafood.core.security.CheckSecurity;
 import com.ibn.algafood.domain.model.Pedido;
 import com.ibn.algafood.domain.filter.PedidoFilter;
 import com.ibn.algafood.domain.service.PedidoService;
@@ -47,6 +48,7 @@ public class PedidoController {
 //        return ResponseEntity.ok(pedidosWrapper);
 //    }
 
+    @CheckSecurity.Pedidos.PodePesquisar
     @GetMapping
     public ResponseEntity<Page<PedidoResumoOutDTO>> findAll(PedidoFilter filter, Pageable pageable) {
         pageable = traduzirPageable(pageable);
@@ -59,6 +61,7 @@ public class PedidoController {
         return ResponseEntity.ok(page);
     }
 
+    @CheckSecurity.Pedidos.PodeCriar
     @GetMapping("/{id}")
     public ResponseEntity<PedidoOutDTO> findById(@PathVariable("id") String id) {
         Pedido pedido = this.pedidoService.findByCodigo(id);
@@ -66,6 +69,7 @@ public class PedidoController {
         return ResponseEntity.ok(pedidoMapper.domaintToDto(pedido));
     }
 
+    @CheckSecurity.Pedidos.PodeBuscar
     @PostMapping
     public ResponseEntity<PedidoOutDTO> save(@RequestBody @Valid PedidoInputDTO dto) {
 

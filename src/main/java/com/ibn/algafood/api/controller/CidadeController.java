@@ -3,6 +3,7 @@ package com.ibn.algafood.api.controller;
 import com.ibn.algafood.api.mapper.CidadeMapper;
 import com.ibn.algafood.api.model.in.CidadeInputDTO;
 import com.ibn.algafood.api.model.out.CidadeOutDTO;
+import com.ibn.algafood.core.security.CheckSecurity;
 import com.ibn.algafood.core.validation.Groups;
 import com.ibn.algafood.domain.exception.AlgafoodException;
 import com.ibn.algafood.domain.exception.EntidadeNaoEncontradaException;
@@ -25,6 +26,7 @@ public class CidadeController {
     private final CidadeService cidadeService;
     private final CidadeMapper cidadeAssembler;
 
+    @CheckSecurity.Cidades.PodeConsultar
     @GetMapping
     public ResponseEntity<List<CidadeOutDTO>> findAll() {
         List<Cidade> cidades = cidadeService.findAll();
@@ -32,6 +34,7 @@ public class CidadeController {
         return ResponseEntity.ok(cidadeAssembler.domainListToDto(cidades));
     }
 
+    @CheckSecurity.Cidades.PodeConsultar
     @GetMapping("/{id}")
     public ResponseEntity<CidadeOutDTO> findById(@PathVariable("id") Long id) {
         Cidade cidade = cidadeService.findById(id);
@@ -39,6 +42,7 @@ public class CidadeController {
         return ResponseEntity.ok(cidadeAssembler.domainToDto(cidade));
     }
 
+    @CheckSecurity.Cidades.PodeEditar
     @PostMapping
     public ResponseEntity<CidadeOutDTO> save(@RequestBody @Validated(Groups.CadastroCidade.class) CidadeInputDTO cidadeInputDTO) {
         try {
@@ -52,6 +56,7 @@ public class CidadeController {
         }
     }
 
+    @CheckSecurity.Cidades.PodeEditar
     @PutMapping("/{id}")
     public ResponseEntity<CidadeOutDTO> update(@PathVariable("id") Long id, @RequestBody @Validated(Groups.CadastroCidade.class) CidadeInputDTO cidadeInput) {
         Cidade cidadeAtual = cidadeService.findById(id);
@@ -67,6 +72,7 @@ public class CidadeController {
         }
     }
 
+    @CheckSecurity.Cidades.PodeEditar
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable("id") Long id) {
         cidadeService.deleteById(id);

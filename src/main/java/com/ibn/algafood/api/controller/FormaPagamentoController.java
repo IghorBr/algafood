@@ -3,6 +3,7 @@ package com.ibn.algafood.api.controller;
 import com.ibn.algafood.api.mapper.FormaPagamentoMapper;
 import com.ibn.algafood.api.model.in.FormaPagamentoInputDTO;
 import com.ibn.algafood.api.model.out.FormaPagamentoOutDTO;
+import com.ibn.algafood.core.security.CheckSecurity;
 import com.ibn.algafood.core.validation.Groups;
 import com.ibn.algafood.domain.model.FormaPagamento;
 import com.ibn.algafood.domain.service.FormaPagamentoService;
@@ -28,6 +29,7 @@ public class FormaPagamentoController {
     private final FormaPagamentoService formaPagamentoService;
     private final FormaPagamentoMapper formaPagamentoMapper;
 
+    @CheckSecurity.FormasPagamento.PodeConsultar
     @GetMapping
     public ResponseEntity<List<FormaPagamentoOutDTO>> findAll(ServletWebRequest request) {
         ShallowEtagHeaderFilter.disableContentCaching(request.getRequest());
@@ -50,6 +52,7 @@ public class FormaPagamentoController {
                 .body(formaPagamentoMapper.domainListToDto(formaPagamentoService.findAll()));
     }
 
+    @CheckSecurity.FormasPagamento.PodeConsultar
     @GetMapping("/{id}")
     public ResponseEntity<FormaPagamentoOutDTO> findById(@PathVariable("id") Long id, ServletWebRequest request) {
         ShallowEtagHeaderFilter.disableContentCaching(request.getRequest());
@@ -72,6 +75,7 @@ public class FormaPagamentoController {
                 .body(formaPagamentoMapper.domainToDto(formaPagamentoService.findById(id)));
     }
 
+    @CheckSecurity.FormasPagamento.PodeEditar
     @PostMapping
     public ResponseEntity<FormaPagamentoOutDTO> save(@RequestBody @Validated(Groups.CadastroFormaPagamento.class) FormaPagamentoInputDTO inputDTO) {
         FormaPagamento fp = formaPagamentoService.save(
@@ -81,6 +85,7 @@ public class FormaPagamentoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(formaPagamentoMapper.domainToDto(fp));
     }
 
+    @CheckSecurity.FormasPagamento.PodeEditar
     @PutMapping("/{id}")
     public ResponseEntity<FormaPagamentoOutDTO> updateById(@PathVariable("id") Long id,
                                                            @RequestBody @Validated(Groups.CadastroFormaPagamento.class) FormaPagamentoInputDTO inputDTO) {
@@ -91,6 +96,7 @@ public class FormaPagamentoController {
         return ResponseEntity.ok(formaPagamentoMapper.domainToDto(formaPagamento));
     }
 
+    @CheckSecurity.FormasPagamento.PodeEditar
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable("id") Long id) {
         formaPagamentoService.deleteById(id);

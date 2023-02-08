@@ -6,6 +6,7 @@ import com.ibn.algafood.api.model.in.FotoProdutoInputDTO;
 import com.ibn.algafood.api.model.in.ProdutoInputDTO;
 import com.ibn.algafood.api.model.out.FotoProdutoOutDTO;
 import com.ibn.algafood.api.model.out.ProdutoOutDTO;
+import com.ibn.algafood.core.security.CheckSecurity;
 import com.ibn.algafood.domain.exception.EntidadeNaoEncontradaException;
 import com.ibn.algafood.domain.model.FotoProduto;
 import com.ibn.algafood.domain.model.Produto;
@@ -40,6 +41,7 @@ public class RestauranteProdutoController {
         this.storageService = storageService;
     }
 
+    @CheckSecurity.Restaurantes.PodeConsultar
     @GetMapping
     public ResponseEntity<List<ProdutoOutDTO>> findAll(@PathVariable("restauranteId") Long id,
                                                        @RequestParam(required = false) boolean findInativos) {
@@ -53,6 +55,7 @@ public class RestauranteProdutoController {
         return ResponseEntity.ok(produtoMapper.domainListToDto(produtos));
     }
 
+    @CheckSecurity.Restaurantes.PodeConsultar
     @GetMapping("/{produtoId}")
     public ResponseEntity<ProdutoOutDTO> findById(@PathVariable("restauranteId") Long restauranteId,
                                                   @PathVariable("produtoId") Long produtoId) {
@@ -61,6 +64,7 @@ public class RestauranteProdutoController {
         return ResponseEntity.ok(produtoMapper.domainToDto(produto));
     }
 
+    @CheckSecurity.Restaurantes.PodeGerenciarFuncionamento
     @PostMapping
     public ResponseEntity<ProdutoOutDTO> save(@PathVariable("restauranteId") Long id,
                                               @RequestBody @Valid ProdutoInputDTO inputDTO) {
@@ -71,6 +75,7 @@ public class RestauranteProdutoController {
 
     }
 
+    @CheckSecurity.Restaurantes.PodeGerenciarFuncionamento
     @PutMapping("/{produtoId}")
     public ResponseEntity<ProdutoOutDTO> updateById(@PathVariable("restauranteId") Long restauranteId,
                                                     @PathVariable("produtoId") Long produtoId,
@@ -83,6 +88,7 @@ public class RestauranteProdutoController {
         return ResponseEntity.ok().body(produtoMapper.domainToDto(produto));
     }
 
+    @CheckSecurity.Restaurantes.PodeConsultar
     @GetMapping(value = "/{produtoId}/foto", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<FotoProdutoOutDTO> getFotoInfo(@PathVariable("restauranteId") Long restauranteId,
                                                      @PathVariable("produtoId") Long produtoId) {
@@ -92,6 +98,7 @@ public class RestauranteProdutoController {
         return ResponseEntity.ok(dto);
     }
 
+    @CheckSecurity.Restaurantes.PodeConsultar
     @GetMapping(value = "/{produtoId}/foto")
     public ResponseEntity<InputStreamResource> getFoto(@PathVariable("restauranteId") Long restauranteId,
                                                        @PathVariable("produtoId") Long produtoId,
@@ -114,6 +121,7 @@ public class RestauranteProdutoController {
 
     }
 
+    @CheckSecurity.Restaurantes.PodeGerenciarFuncionamento
     @PutMapping(value = "/{produtoId}/foto", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<FotoProdutoOutDTO> updatePicture(
             @PathVariable("restauranteId") Long restauranteId,
@@ -135,6 +143,7 @@ public class RestauranteProdutoController {
         return ResponseEntity.ok(fotoProdutoDTO);
     }
 
+    @CheckSecurity.Restaurantes.PodeGerenciarFuncionamento
     @DeleteMapping("/{produtoId}/foto")
     public ResponseEntity<Void> deletarFoto(@PathVariable("restauranteId") Long restauranteId,
                                             @PathVariable("produtoId") Long produtoId) {

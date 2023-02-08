@@ -5,6 +5,7 @@ import com.ibn.algafood.api.model.in.SenhaInputDTO;
 import com.ibn.algafood.api.model.in.UsuarioComSenhaInputDTO;
 import com.ibn.algafood.api.model.in.UsuarioInputDTO;
 import com.ibn.algafood.api.model.out.UsuarioOutDTO;
+import com.ibn.algafood.core.security.CheckSecurity;
 import com.ibn.algafood.domain.model.Usuario;
 import com.ibn.algafood.domain.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ public class UsuarioController {
     private final UsuarioService usuarioService;
     private final UsuarioMapper usuarioMapper;
 
+    @CheckSecurity.UsuariosGruposPermissoes.PodeConsultar
     @GetMapping
     public ResponseEntity<List<UsuarioOutDTO>> findAll() {
         List<Usuario> usuarios = usuarioService.findAll();
@@ -30,6 +32,7 @@ public class UsuarioController {
         return new ResponseEntity<>(usuarioMapper.listDomainToDto(usuarios), null, HttpStatus.OK);
     }
 
+    @CheckSecurity.UsuariosGruposPermissoes.PodeConsultar
     @GetMapping("/{id}")
     public ResponseEntity<UsuarioOutDTO> findById(@PathVariable("id") Long id) {
         Usuario usuario = usuarioService.findById(id);
@@ -45,6 +48,7 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.CREATED).body(usuarioMapper.domainToDto(usuario));
     }
 
+    @CheckSecurity.UsuariosGruposPermissoes.PodeAlterarUsuario
     @PutMapping("/{id}")
     public ResponseEntity<UsuarioOutDTO> updateById(@PathVariable("id") Long id,
                                                     @RequestBody @Valid UsuarioInputDTO inputDTO) {
@@ -55,6 +59,7 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.OK).body(usuarioMapper.domainToDto(usuario));
     }
 
+    @CheckSecurity.UsuariosGruposPermissoes.PodeAlterarPropriaSenha
     @PutMapping("/{id}/senha")
     public ResponseEntity<Void> changePassword(@PathVariable("id") Long id,
                                                         @RequestBody @Valid SenhaInputDTO inputDTO) {

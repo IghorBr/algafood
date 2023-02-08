@@ -2,6 +2,7 @@ package com.ibn.algafood.api.controller;
 
 import com.ibn.algafood.api.mapper.PermissaoMapper;
 import com.ibn.algafood.api.model.out.PermissaoOutDTO;
+import com.ibn.algafood.core.security.CheckSecurity;
 import com.ibn.algafood.domain.exception.PermissaoNaoEncontradaException;
 import com.ibn.algafood.domain.model.Grupo;
 import com.ibn.algafood.domain.model.Permissao;
@@ -21,6 +22,7 @@ public class GrupoPermissaoController {
     private final GrupoService grupoService;
     private final PermissaoMapper permissaoMapper;
 
+    @CheckSecurity.UsuariosGruposPermissoes.PodeConsultar
     @GetMapping
     public ResponseEntity<List<PermissaoOutDTO>> findAllPermissoes(@PathVariable("grupoId") Long id) {
         Grupo grupo = grupoService.findBydId(id);
@@ -40,6 +42,7 @@ public class GrupoPermissaoController {
         return ResponseEntity.ok(permissaoMapper.domainToDto(permissao));
     }
 
+    @CheckSecurity.UsuariosGruposPermissoes.PodeEditar
     @PutMapping("/{permissaoId}")
     public ResponseEntity<Void> adicionarPermissao(@PathVariable("grupoId") Long grupoId,
                                                    @PathVariable("permissaoId") Long permissaoId) {
@@ -47,6 +50,7 @@ public class GrupoPermissaoController {
         return ResponseEntity.noContent().build();
     }
 
+    @CheckSecurity.UsuariosGruposPermissoes.PodeEditar
     @DeleteMapping("/{permissaoId}")
     public ResponseEntity<Void> removerPermissao(@PathVariable("grupoId") Long grupoId,
                                                  @PathVariable("permissaoId") Long permissaoId) {

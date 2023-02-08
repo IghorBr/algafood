@@ -1,5 +1,6 @@
 package com.ibn.algafood.api.controller;
 
+import com.ibn.algafood.core.security.CheckSecurity;
 import com.ibn.algafood.domain.filter.VendaDiariaFilter;
 import com.ibn.algafood.domain.model.dto.VendaDiaria;
 import com.ibn.algafood.domain.service.VendaQueryService;
@@ -19,6 +20,7 @@ public class EstatisticasController {
 
     private final VendaQueryService vendaQueryService;
 
+    @CheckSecurity.Estatisticas.PodeConsultar
     @GetMapping("/vendas-diarias")
     public ResponseEntity<List<VendaDiaria>> consultarVendasDiarias(VendaDiariaFilter filter,
                                                                     @RequestParam(required = false, defaultValue = "+00:00") String timeOffset) {

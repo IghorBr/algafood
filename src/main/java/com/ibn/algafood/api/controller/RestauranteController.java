@@ -7,6 +7,7 @@ import com.ibn.algafood.api.mapper.RestauranteMapper;
 import com.ibn.algafood.api.model.in.RestauranteInputDTO;
 import com.ibn.algafood.api.model.out.RestauranteOutDTO;
 import com.ibn.algafood.api.model.view.RestauranteView;
+import com.ibn.algafood.core.security.CheckSecurity;
 import com.ibn.algafood.core.validation.Groups;
 import com.ibn.algafood.domain.exception.AlgafoodException;
 import com.ibn.algafood.domain.exception.EntidadeNaoEncontradaException;
@@ -49,6 +50,7 @@ public class RestauranteController {
         this.validator = factory.getValidator();
     }
 
+    @CheckSecurity.Restaurantes.PodeConsultar
     @GetMapping
     public ResponseEntity<MappingJacksonValue> findAll() {
         List<Restaurante> restaurantes = restauranteService.findAll();
@@ -62,6 +64,7 @@ public class RestauranteController {
         return ResponseEntity.ok(wrapper);
     }
 
+    @CheckSecurity.Restaurantes.PodeConsultar
     @GetMapping("/{restauranteId}")
     public ResponseEntity<RestauranteOutDTO> findById(@PathVariable Long restauranteId) {
         Restaurante restaurante = restauranteService.findById(restauranteId);
@@ -69,6 +72,7 @@ public class RestauranteController {
         return ResponseEntity.ok(restauranteAssembler.domainToOutDto(restaurante));
     }
 
+    @CheckSecurity.Restaurantes.PodeConsultar
     @GetMapping("/por-nome")
     public ResponseEntity<List<RestauranteOutDTO>> findByName(@RequestParam("nome") String nome, @RequestParam("id") Long id) {
         List<Restaurante> restaurantes = restauranteService.consultarPorNome(nome, id);
@@ -78,6 +82,7 @@ public class RestauranteController {
         return ResponseEntity.ok(dtos);
     }
 
+    @CheckSecurity.Restaurantes.PodeConsultar
     @GetMapping("/find")
     public ResponseEntity<List<RestauranteOutDTO>> find(
             @RequestParam(value = "nome", required = false) String nome,
@@ -91,6 +96,7 @@ public class RestauranteController {
         return ResponseEntity.ok(dtos);
     }
 
+    @CheckSecurity.Restaurantes.PodeConsultar
     @GetMapping("/gratuito")
     public ResponseEntity<List<RestauranteOutDTO>> findSpec(
             @RequestParam(value = "nome", required = false) String nome
@@ -102,6 +108,7 @@ public class RestauranteController {
         return ResponseEntity.ok(dtos);
     }
 
+    @CheckSecurity.Restaurantes.PodeGerenciarCadastro
     @PostMapping
     public ResponseEntity<RestauranteOutDTO> save(@RequestBody @Valid RestauranteInputDTO restauranteInput) {
         try {
@@ -116,6 +123,7 @@ public class RestauranteController {
         }
     }
 
+    @CheckSecurity.Restaurantes.PodeGerenciarCadastro
     @PutMapping("/{restauranteId}")
     public ResponseEntity<RestauranteOutDTO> update(@PathVariable Long restauranteId,
                                                     @RequestBody @Valid RestauranteInputDTO restauranteInputDTO) {
@@ -154,35 +162,42 @@ public class RestauranteController {
         }
     }
 
+    @CheckSecurity.Restaurantes.PodeGerenciarCadastro
     @PutMapping("/{id}/ativo")
     public ResponseEntity<Void> ativar(@PathVariable("id") Long id) {
         restauranteService.ativar(id);
         return ResponseEntity.noContent().build();
     }
 
+    @CheckSecurity.Restaurantes.PodeGerenciarCadastro
     @PutMapping("/ativacoes")
     public ResponseEntity<Void> ativarMultiplos(@RequestBody List<Long> ids) {
         restauranteService.ativar(ids);
         return ResponseEntity.noContent().build();
     }
 
+    @CheckSecurity.Restaurantes.PodeGerenciarCadastro
     @DeleteMapping("/ativacoes")
     public ResponseEntity<Void> aintivarMultiplos(@RequestBody List<Long> ids) {
         restauranteService.ativar(ids);
         return ResponseEntity.noContent().build();
     }
+
+    @CheckSecurity.Restaurantes.PodeGerenciarFuncionamento
     @PutMapping("/{id}/abertura")
     public ResponseEntity<Void> abrir(@PathVariable("id") Long id) {
         restauranteService.abrir(id);
         return ResponseEntity.noContent().build();
     }
 
+    @CheckSecurity.Restaurantes.PodeGerenciarFuncionamento
     @PutMapping("/{id}/fechamento")
     public ResponseEntity<Void> fechar(@PathVariable("id") Long id) {
         restauranteService.fechar(id);
         return ResponseEntity.noContent().build();
     }
 
+    @CheckSecurity.Restaurantes.PodeGerenciarFuncionamento
     @DeleteMapping("/{id}/ativo")
     public ResponseEntity<Void> inativar(@PathVariable("id") Long id) {
         restauranteService.inativar(id);

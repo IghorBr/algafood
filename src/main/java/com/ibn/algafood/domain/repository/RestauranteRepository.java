@@ -12,4 +12,6 @@ public interface RestauranteRepository extends BaseRepository<Restaurante, Long>
     List<Restaurante> findAll();
 
     List<Restaurante> consultarPorNome(String nome, Long id);
+
+    boolean existsResponsavel(Long restauranteId, Long usuarioId);
 }

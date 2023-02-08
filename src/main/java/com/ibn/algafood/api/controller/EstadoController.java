@@ -3,6 +3,7 @@ package com.ibn.algafood.api.controller;
 import com.ibn.algafood.api.mapper.EstadoMapper;
 import com.ibn.algafood.api.model.in.EstadoInputDTO;
 import com.ibn.algafood.api.model.out.EstadoOutDTO;
+import com.ibn.algafood.core.security.CheckSecurity;
 import com.ibn.algafood.core.validation.Groups;
 import com.ibn.algafood.domain.model.Estado;
 import com.ibn.algafood.domain.service.EstadoService;
@@ -22,18 +23,21 @@ public class EstadoController {
     private final EstadoService estadoService;
     private final EstadoMapper estadoAssembler;
 
+    @CheckSecurity.Estados.PodeConsultar
     @GetMapping
     public ResponseEntity<List<EstadoOutDTO>> findAll() {
         List<Estado> estados = estadoService.findAll();
         return ResponseEntity.ok(estadoAssembler.domainListToDto(estados));
     }
 
+    @CheckSecurity.Estados.PodeConsultar
     @GetMapping("/{estadoId}")
     public ResponseEntity<EstadoOutDTO> findById(@PathVariable Long estadoId) {
         Estado estado = estadoService.findById(estadoId);
         return ResponseEntity.ok(estadoAssembler.domainToDto(estado));
     }
 
+    @CheckSecurity.Estados.PodeEditar
     @PostMapping
     public ResponseEntity<EstadoOutDTO> save(@RequestBody @Validated(Groups.CadastroEstado.class) EstadoInputDTO estadoInputDTO) {
         Estado estado = estadoAssembler.inputDtoToDomain(estadoInputDTO);
@@ -42,6 +46,7 @@ public class EstadoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(estadoAssembler.domainToDto(estado));
     }
 
+    @CheckSecurity.Estados.PodeEditar
     @PutMapping("/{estadoId}")
     public ResponseEntity<EstadoOutDTO> update(@PathVariable Long estadoId,
                                             @RequestBody @Validated(Groups.CadastroEstado.class) EstadoInputDTO estadoInputDTO) {
@@ -54,6 +59,7 @@ public class EstadoController {
         return ResponseEntity.ok(estadoAssembler.domainToDto(estadoAtual));
     }
 
+    @CheckSecurity.Estados.PodeEditar
     @DeleteMapping("/{estadoId}")
     public ResponseEntity<Void> remover(@PathVariable Long estadoId) {
         estadoService.deleteById(estadoId);

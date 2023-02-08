@@ -3,6 +3,7 @@ package com.ibn.algafood.api.controller;
 import com.ibn.algafood.api.mapper.CozinhaMapper;
 import com.ibn.algafood.api.model.in.CozinhaInputDTO;
 import com.ibn.algafood.api.model.out.CozinhaOutDTO;
+import com.ibn.algafood.core.security.CheckSecurity;
 import com.ibn.algafood.core.validation.Groups;
 import com.ibn.algafood.domain.model.Cozinha;
 import com.ibn.algafood.domain.service.CozinhaService;
@@ -25,6 +26,7 @@ public class CozinhaController {
     private final CozinhaService cozinhaService;
     private final CozinhaMapper cozinhaMapper;
 
+    @CheckSecurity.Cozinhas.PodeConsultar
     @GetMapping
     public ResponseEntity<Page<CozinhaOutDTO>> findAll(Pageable pageable) {
         Page<Cozinha> cozinhas = cozinhaService.findAll(pageable);
@@ -35,6 +37,7 @@ public class CozinhaController {
         return ResponseEntity.ok(cozinhaPage);
     }
 
+    @CheckSecurity.Cozinhas.PodeConsultar
     @GetMapping("/{cozinhaId}")
     public ResponseEntity<CozinhaOutDTO> findById(@PathVariable Long cozinhaId) {
         Cozinha cozinha = cozinhaService.findById(cozinhaId);
@@ -42,6 +45,7 @@ public class CozinhaController {
         return ResponseEntity.ok(cozinhaMapper.domainToDto(cozinha));
     }
 
+    @CheckSecurity.Cozinhas.PodeEditar
     @PostMapping
     public ResponseEntity<CozinhaOutDTO> save(@RequestBody @Validated(Groups.CadastroCozinha.class) CozinhaInputDTO cozinhaInputDTO) {
         Cozinha cozinha = cozinhaMapper.inputDtoToDomain(cozinhaInputDTO);
@@ -50,6 +54,7 @@ public class CozinhaController {
         return ResponseEntity.status(HttpStatus.CREATED).body(cozinhaMapper.domainToDto(cozinha));
     }
 
+    @CheckSecurity.Cozinhas.PodeEditar
     @PutMapping("/{cozinhaId}")
     public ResponseEntity<CozinhaOutDTO> update(@PathVariable Long cozinhaId,
                                              @RequestBody @Validated(Groups.CadastroCozinha.class) CozinhaInputDTO cozinhaInputDTO) {
@@ -62,6 +67,7 @@ public class CozinhaController {
         return ResponseEntity.ok(cozinhaMapper.domainToDto(cozinhaSalva));
     }
 
+    @CheckSecurity.Cozinhas.PodeEditar
     @DeleteMapping("/{cozinhaId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteById(@PathVariable Long cozinhaId) {

@@ -3,6 +3,7 @@ package com.ibn.algafood.api.controller;
 import com.ibn.algafood.api.mapper.GrupoMapper;
 import com.ibn.algafood.api.model.in.GrupoInputDTO;
 import com.ibn.algafood.api.model.out.GrupoOutDTO;
+import com.ibn.algafood.core.security.CheckSecurity;
 import com.ibn.algafood.core.validation.Groups;
 import com.ibn.algafood.domain.model.Grupo;
 import com.ibn.algafood.domain.service.GrupoService;
@@ -22,6 +23,7 @@ public class GrupoController {
     private final GrupoService grupoService;
     private final GrupoMapper grupoMapper;
 
+    @CheckSecurity.UsuariosGruposPermissoes.PodeConsultar
     @GetMapping
     public ResponseEntity<List<GrupoOutDTO>> findAll() {
         List<Grupo> grupos = grupoService.findAll();
@@ -29,6 +31,7 @@ public class GrupoController {
         return ResponseEntity.ok(grupoMapper.domainListToDto(grupos));
     }
 
+    @CheckSecurity.UsuariosGruposPermissoes.PodeConsultar
     @GetMapping("/{id}")
     public ResponseEntity<GrupoOutDTO> findById(@PathVariable("id") Long id) {
         Grupo grupo = grupoService.findBydId(id);
@@ -36,6 +39,7 @@ public class GrupoController {
         return ResponseEntity.ok(grupoMapper.domainToDto(grupo));
     }
 
+    @CheckSecurity.UsuariosGruposPermissoes.PodeEditar
     @PostMapping
     public ResponseEntity<GrupoOutDTO> save(@RequestBody @Validated(Groups.CadastroGrupo.class) GrupoInputDTO inputDTO) {
         Grupo grupo = grupoMapper.inputDtoToDomain(inputDTO);
@@ -44,6 +48,7 @@ public class GrupoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(grupoMapper.domainToDto(grupo));
     }
 
+    @CheckSecurity.UsuariosGruposPermissoes.PodeEditar
     @PutMapping("/{id}")
     public ResponseEntity<GrupoOutDTO> updateById(@PathVariable("id") Long id,
                                                   @RequestBody @Validated(Groups.CadastroGrupo.class) GrupoInputDTO inputDTO) {
@@ -54,6 +59,7 @@ public class GrupoController {
         return ResponseEntity.ok(grupoMapper.domainToDto(grupo));
     }
 
+    @CheckSecurity.UsuariosGruposPermissoes.PodeEditar
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable("id") Long id) {
         grupoService.deleteById(id);
